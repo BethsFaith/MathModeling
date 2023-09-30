@@ -1,8 +1,24 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <wtypes.h>
+
+static void pullDesktopResolution(int& horizontal, int& vertical)
+{
+    RECT desktop;
+
+    const HWND hDesktop = GetDesktopWindow();
+
+    GetWindowRect(hDesktop, &desktop);
+
+    horizontal = desktop.right;
+    vertical = desktop.bottom;
+}
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(500, 500), "Graph");
+    int width, height;
+    pullDesktopResolution(width, height);
+
+    sf::RenderWindow window(sf::VideoMode(width, height), "Koshi");
     std::vector<sf::Vertex> points;
 
     // Главный цикл приложения. Выполняется, пока открыто окно

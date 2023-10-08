@@ -17,6 +17,14 @@ conan_cmake_run(CONANFILE conanfile.txt
         BASIC_SETUP
         BUILD missing)
 
-add_executable(Lab1_Koshi main.cpp graphics/Function.cpp graphics/Function.h graphics/Color.h)
+add_executable(Lab1_Koshi
+        src/main.cpp
+        src/math/Function.cpp
+        src/math/Sequence.cpp
+        src/math/Operations.cpp
+        src/math/Utilities.cpp
+        src/Window.cpp
+        src/InputSystem.cpp
+        src/GraphWindow.cpp src/GraphWindow.h)
 
 target_link_libraries(Lab1_Koshi ${CONAN_LIBS})

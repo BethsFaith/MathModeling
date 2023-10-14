@@ -44,14 +44,18 @@ int main() {
 ////        window.addFunction(function, Color::GREY);
 //    }
 
-    DifFunction function("-2*x", "x");
+    DifFunction function("0.5*x", "x");
     std::vector<GraphWindow::Point> points;
     bool res;
 
-    points.emplace_back(0, 1);
-    for (int i{1}; i < 5; ++i) {
+//    points.emplace_back(0, 1);
+//
+    float t = 1;
+    float iterations = 12;
+    for (float i{0}; i < iterations; i += t) {
         auto y = function.getValue(i, res);
         if (res) {
+            std::cout << i << " = " << y << std::endl;
             points.emplace_back(i, y);
         }
     }

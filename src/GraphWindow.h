@@ -26,7 +26,9 @@ public:
 
     void start() override;
 
-    void setView(double offsetX, double offsetY);
+    void setView(double xOffset, double yOffset);
+
+    void dragging();
 
     void addFunction(const std::vector<Point> &points, const std::string &name, Color color);
 
@@ -40,12 +42,12 @@ protected:
     void construct(DrawableFunction &function);
 
     bool onScreen(int cX, int cY) const;
-    double toMathX(int x) const;
-    double toMathY(int y) const;
     int toCrdX(double x) const;
     int toCrdY(double y) const;
 
     static const int defaultSegSize = 128;
+    static const int maxSegSize = 250;
+    static const int minSegSize = 15;
 private:
     double _axesStep{};
     double _scaleX{};

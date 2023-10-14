@@ -8,6 +8,9 @@ DifFunction::DifFunction(const std::string &function, std::string argument) : Fu
 }
 
 double DifFunction::getValue(double x, bool &success) {
+    if (x == 0)
+        return last_y;
+
     double res;
 
     _expression.setArgument(_argument, last_y);

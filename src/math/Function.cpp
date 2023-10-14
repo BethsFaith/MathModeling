@@ -9,9 +9,9 @@
 Function::Function(const std::string &function, std::string argument) : _expression(function), _argument(std::move(argument)) {}
 
 double Function::getValue(double x, bool &success) {
-    double res;
-
     _expression.setArgument(_argument, x);
+
+    double res;
     success = _expression.consider(res);
 
     return res;

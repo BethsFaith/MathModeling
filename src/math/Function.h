@@ -16,12 +16,12 @@
 class Function {
 public:
     explicit Function(const std::string &function, std::string argument);
-    ~Function() = default;
+    virtual ~Function() = default;
 
-    double getValue(double x, bool &success);
+    virtual double getValue(double x, bool &success);
 
     std::string getArgument();
-private:
+protected:
     Sequence _expression;
     std::string _argument;
 };

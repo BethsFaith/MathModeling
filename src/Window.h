@@ -10,7 +10,7 @@
 
 class Window {
 public:
-    Window(int width, int height, const char* title, Color backgroundColor);
+    Window(int width_, int height_, const char* title, Color backgroundColor);
     virtual ~Window() = default;
 
     virtual void start();
@@ -24,8 +24,8 @@ protected:
     sf::RenderWindow window;
     InputSystem input;
 
-    int sWidth;
-    int sHeight;
+    int width;
+    int height;
 
     sf::Clock clock;
     sf::Color cBackground;

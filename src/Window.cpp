@@ -4,8 +4,8 @@
 
 #include "Window.h"
 
-Window::Window(int width, int height, const char *title, Color backgroundColor)
-        : window(sf::VideoMode(width, height), title), sWidth(width), sHeight(height) {
+Window::Window(int width_, int height_, const char *title, Color backgroundColor)
+        : window(sf::VideoMode(width_, height_), title), width(width_), height(height_) {
     cBackground = getColor(backgroundColor);
 }
 

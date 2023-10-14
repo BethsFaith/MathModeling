@@ -5,28 +5,39 @@
 #ifndef LAB1_KOSHI_GRAPHWINDOW_H
 #define LAB1_KOSHI_GRAPHWINDOW_H
 
+#include <algorithm>
+
 #include "Window.h"
-#include "math/Function.h"
 #include "math/Utilities.h"
 
 class GraphWindow : public Window{
 public:
+    struct Point {
+        float x;
+        float y;
+    };
+    struct DrawableFunction {
+          std::vector<Point> points;
+          sf::Color color;
+          std::string name;
+    };
+
     GraphWindow(int width, int height, const char* title, Color backgroundColor, Color cAxes);
 
     void start() override;
 
     void setView(double offsetX, double offsetY);
 
-    void addFunction(Function& func, Color color);
+    void addFunction(const std::vector<Point> &points, const std::string &name, Color color);
+
+    void setAxesStep(double axesStep);
 
 protected:
     void update(double deltaTime) override;
     void display() override;
 
-    void dragging();
     void drawAxes();
-    void construct(Function& func, sf::Color color);
-    void graphMark();
+    void construct(DrawableFunction &function);
 
     bool onScreen(int cX, int cY) const;
     double toMathX(int x) const;
@@ -36,15 +47,15 @@ protected:
 
     static const int defaultSegSize = 128;
 private:
-    int _curMark{};
-    double _scale{}; //pixels per unit
     double _axesStep{};
-    int _axesPrecision{};
+    double _scaleX{};
+    double _scaleY{};
     double _xOffset{};
     double _yOffset{};
 
-    std::vector<std::pair<Function, sf::Color>> _funcs;
     sf::Color _axisColor;
+    std::vector<DrawableFunction> _functions;
+    int _curFunctionIndex;
 };
 
 

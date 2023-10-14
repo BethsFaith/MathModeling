@@ -62,7 +62,7 @@ namespace Utilities {
         }
     }
 
-    void line(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color)
+    void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color)
     {
         sf::Vertex line[] =	{sf::Vertex(sf::Vector2f(x1, y1), color),
                                 sf::Vertex(sf::Vector2f(x2 + 1, y2 + 1), color) };
@@ -70,7 +70,7 @@ namespace Utilities {
     }
     void setPixel(sf::RenderWindow& window, int x, int y, sf::Color color)
     {
-        line(window, x, y, x, y, color);
+        drawLine(window, x, y, x, y, color);
     }
 
     void cursorRestriction(const sf::RenderWindow& window)

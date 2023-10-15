@@ -66,7 +66,7 @@ int main() {
     x = 0;
     iterations = 60;
     std::cout << "y(x) = y" << std::endl;
-    std::cout << x << " = " << y0 << std::endl;
+    std::cout << "y(0) = 1" << std::endl;
     points.emplace_back(x, y0);
 
     for (int i{1}; i < iterations; ++i) {
@@ -86,7 +86,7 @@ int main() {
     }
     if (pointCoincidence) {
         auto errorRate = abs(trueValue - curValue)/trueValue;
-        std::cout << "Погрешность:" << errorRate << std::endl;
+        std::cout << "Погрешность:" << errorRate << std::endl << std::endl;
     }
     window.addFunction(points, name, Color::BLUE);
     points.clear();
@@ -98,12 +98,12 @@ int main() {
 
     pointCoincidence = false;
     t = 0.01;
-    iterations = 70;
+    iterations = 55;
     y0 = 1;
     yn = 0;
     x = 0;
     std::cout << "y(x) = y" << std::endl;
-    std::cout << x << " = " << y0 << std::endl;
+    std::cout << "y(0) = 1" << std::endl;
     points.emplace_back(x, y0);
 
     for (int i{1}; i < iterations; ++i) {
@@ -123,43 +123,40 @@ int main() {
     }
     if (pointCoincidence) {
         auto errorRate = abs(trueValue - curValue)/trueValue;
-        std::cout << "Погрешность:" << errorRate << std::endl;
+        std::cout << "Погрешность:" << errorRate << std::endl << std::endl;
     }
     window.addFunction(points, name, Color::ORANGE);
     points.clear();
 
     // с весами
     std::cout << "C весами" << std::endl;
-    name = "With scales: yn+1 = (sqrt(- t^2 * yn - 3t^2 + 2t*yn + 12t - 11) -1) / t - 2";
+    name = "With scales: yn+1 = (-1 + sqrt(1 - 2ty0 - t^2*yn^2 - 6t^2))/(-t)";
     std::cout << name << std::endl;
 
     pointCoincidence = false;
     t = 0.01;
     iterations = 50;
-    std::complex<float>y{1};
-    std::complex<float>yn2{0};
+    y0 = 1;
+    yn = 0;
     x = 0;
     std::cout << "y(x) = y" << std::endl;
-    std::cout << x << " = " << y0 << std::endl;
-    points.emplace_back(x, y.real());
+    std::cout << "y(0) = 1" << std::endl;
+    points.emplace_back(x, y0);
 
     for (int i{1}; i < iterations; ++i) {
         x = x+t;
 
-        auto t2 = t*t;
-        std::complex<float> neg = (-t2 * y - 3 * t2 + 2*t*y + 12*t - std::complex<float>{11});
-        std::complex<float> complex = sqrt(neg);
-        yn2 = (complex - std::complex<float>{1}) / (std::complex<float>(t-2));
+        yn = (-1 + sqrt(1 - 2*t*y0 - t*t*y0*y0 - 6*t*t))/(-t);
 
-        points.emplace_back(x, yn2.real());
-        std::cout << "y(" << x << ") = " << yn2 << std::endl;
-
-        y = yn2;
+        points.emplace_back(x, yn);
+        std::cout << "y(" << x << ") = " << yn << std::endl;
 
         if ((int)(x*100) == (int)(point*100)) {
-            curValue = yn2.real();
+            curValue = yn;
             pointCoincidence = true;
         }
+
+        y0 = yn;
     }
     if (pointCoincidence) {
         auto errorRate = abs(trueValue - curValue)/trueValue;

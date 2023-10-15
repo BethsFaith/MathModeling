@@ -13,7 +13,8 @@ enum Color {
     ORANGE,
     GREEN,
     GREY,
-    BLACK
+    BLACK,
+    PURPLE
 };
 
 #endif //LAB1_KOSHI_COLOR_H

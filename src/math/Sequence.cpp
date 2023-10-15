@@ -7,6 +7,7 @@
 Sequence::Sequence(const std::string &expr) {
     sequence = toRPN(expr);
     variables["e"] = M_E;
+    variables["pi"] = 0.314f;
 }
 
 void Sequence::setArgument(const std::string &variable, double value) {

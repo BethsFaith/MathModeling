@@ -71,5 +71,7 @@ sf::Color Window::getColor(Color color) {
             return {133, 130, 127};
         case BLACK:
             return sf::Color::Black;
+        case PURPLE:
+            return {192,5,248};
     }
 }

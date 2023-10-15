@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <wtypes.h>
+#include <complex>
 
 #include "GraphWindow.h"
 #include "math/DifFunction.h"
@@ -23,44 +24,131 @@ int main() {
     int width, height;
     pullDesktopResolution(width, height);
 
-    GraphWindow window(width, height, "Koshi", Color::WHITE, Color::GREEN);
+    GraphWindow window(width, height, "Koshi", Color::WHITE, Color::GREY);
 
-//    /*явная схема*/ {
-//        std::vector<Function> funcs;
-//        float t = 1.5;
-//        float y0 = 1;
-//
-//        float a = y0 - t;
-//        for (int i = 1; i < 4; ++i) {
-//            // yn+1 = yn * a
-//            float y = y0*a;
-//            std::string expr = std::to_string(y);
-//            y0 = y;
-//
-//            Function function(expr, "x");
-////            window.addFunction(function, (Color)i);
-//        }
-//
-////        window.addFunction(function, Color::GREY);
-//    }
-
-    DifFunction function("0.5*x", "x");
     std::vector<GraphWindow::Point> points;
     bool res;
+    float iterations = 5;
+    float t = 0.2;
+    float x = 0;
 
-//    points.emplace_back(0, 1);
-//
-    float t = 1;
-    float iterations = 12;
-    for (float i{0}; i < iterations; i += t) {
-        auto y = function.getValue(i, res);
+    // точное решение
+    std::cout << "Точное решение" << std::endl;
+
+    auto name = "sqrt(3)*tg(sqrt(3)*x+pi/6)";
+    Function function(name, "x");
+    std::cout << name << std::endl;
+    for (; x < iterations; x += t){
+        auto y = function.getValue(x, res);
         if (res) {
-            std::cout << i << " = " << y << std::endl;
-            points.emplace_back(i, y);
+            std::cout << "y(" << x << ") = " << y << std::endl;
+            points.emplace_back(x, y);
         }
     }
+    window.addFunction(points, "sqrt(2)*tg(sqrt(2)*x+atg(1/sqrt(2)))", Color::PURPLE);
 
-    window.addFunction(points, "-2*x", GREY);
+    points.clear();
+
+    // неявная схема
+    std::cout << "Явная схема" << std::endl;
+
+    name = "y(n+1) = yn + (yn*yn+3)*t";
+    std::cout << name << std::endl;
+
+    t = 0.01;
+    float y0 = 1;
+    float yn = 0;
+    x = 0;
+    iterations = 60;
+    std::cout << "y(x) = y" << std::endl;
+    std::cout << x << " = " << y0 << std::endl;
+    points.emplace_back(x, y0);
+
+    for (int i{1}; i < iterations; ++i) {
+        x = x+t;
+
+        float yx = (y0*y0+3)*t;
+        yn = y0 + yx;
+
+        points.emplace_back(x, yn);
+        std::cout << "y(" << x << ") = " << yn << std::endl;
+
+        y0 = yn;
+    }
+    window.addFunction(points, name, Color::BLUE);
+    points.clear();
+
+    // неявная схема
+    std::cout << "Неявная схема" << std::endl;
+    name = "yn+1 = (sqrt(-8 * t^2 - 4 * yn * t + 1) / 2 - 0.5) / t";
+    std::cout << name << std::endl;
+
+    t = 0.01;
+    iterations = 60;
+    y0 = 1;
+    yn = 0;
+    x = 0;
+    std::cout << "y(x) = y" << std::endl;
+    std::cout << x << " = " << y0 << std::endl;
+    points.emplace_back(x, y0);
+
+    for (int i{1}; i < iterations; ++i) {
+        x = x+t;
+
+        float z = sqrt(-8 * t*t - 4 * y0 * t + 1);
+        z /= 2;
+        z += -0.5;
+
+        yn = - (z)/t;
+
+        points.emplace_back(x, yn);
+        std::cout << "y(" << x << ") = " << yn << std::endl;
+
+        y0 = yn;
+    }
+    window.addFunction(points, name, Color::ORANGE);
+    points.clear();
+
+    // неявная схема
+    std::cout << "C весами" << std::endl;
+    name = "yn+1 = (sqrt(- t^2 * yn - 3t^2 + 2t*yn + 12t - 11) -1) / t - 2";
+    std::cout << name << std::endl;
+
+    t = 0.01;
+    iterations = 20;
+    std::complex<float>y{1};
+    std::complex<float>yn2{0};
+    x = 0;
+    std::cout << "y(x) = y" << std::endl;
+    std::cout << x << " = " << y0 << std::endl;
+    points.emplace_back(x, y.real());
+
+    for (int i{1}; i < iterations; ++i) {
+        x = x+t;
+
+        auto t2 = t*t;
+        std::complex<float> neg = (-t2 * y - 3 * t2 + 2*t*y + 12*t - std::complex<float>{11});
+        std::complex<float> complex = sqrt(neg);
+        yn2 = (complex - std::complex<float>{1}) / (std::complex<float>(t-2));
+
+        points.emplace_back(x, yn2.real());
+        std::cout << "y(" << x << ") = " << yn2 << std::endl;
+
+        y = yn2;
+    }
+    window.addFunction(points, name, Color::BLACK);
+
+    window.setXStep(0.5);
+    window.setYStep(0.5);
+
+    window.setXPrecision(1);
+    window.setYPrecision(1);
+
+    window.setXOffset(1);
+    window.setYOffset(1);
+
+    window.setView(-1, 0);
+
     window.start();
 
     return 0;

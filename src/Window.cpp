@@ -66,12 +66,14 @@ sf::Color Window::getColor(Color color) {
         case ORANGE:
             return {255, 135, 23};
         case GREEN:
-            return sf::Color::Green;
+            return {68, 148, 74};
         case GREY:
             return {133, 130, 127};
         case BLACK:
             return sf::Color::Black;
         case PURPLE:
             return {192,5,248};
+        case PINK:
+            return {255, 20, 147};
     }
 }

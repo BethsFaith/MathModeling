@@ -163,7 +163,7 @@ int main() {
         std::cout << "Погрешность:" << errorRate << std::endl;
     }
 
-    window.addFunction(points, name, Color::RED);
+    window.addFunction(points, name, Color::GREEN);
 
     window.setXStep(0.1);
     window.setYStep(0.1);

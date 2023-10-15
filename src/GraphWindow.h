@@ -53,7 +53,7 @@ protected:
     int toCrdY(double y) const;
 
     static const int defaultSegSize = 500;
-    static const int maxSegSize =  1000;
+    static const int maxSegSize =  4000;
     static const int minSegSize = 15;
 private:
     double _xStep{};

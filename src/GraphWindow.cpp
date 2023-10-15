@@ -174,6 +174,14 @@ void GraphWindow::drawAxes() {
         markupText.setPosition(toCrdX(0), toCrdY((i)));
         window.draw(markupText);
     }
+
+    for (int i{}; i < _functions.size(); ++i){
+        Utilities::drawLine(window, toCrdX(-1), toCrdY(i),
+                            toCrdX(-3), toCrdY(i), _functions.at(i).color);
+        markupText.setString(_functions.at(i).name);
+        markupText.setPosition(toCrdX(-3), toCrdY((i)));
+        window.draw(markupText);
+    }
 }
 
 void GraphWindow::construct(DrawableFunction &function) {

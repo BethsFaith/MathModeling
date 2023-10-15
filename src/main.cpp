@@ -29,7 +29,7 @@ int main() {
     std::vector<GraphWindow::Point> points;
     bool res;
     float iterations = 5;
-    float t = 0.2;
+    float t = 0.1;
     float x = 0;
 
     // точное решение
@@ -45,14 +45,19 @@ int main() {
             points.emplace_back(x, y);
         }
     }
-    window.addFunction(points, "sqrt(2)*tg(sqrt(2)*x+atg(1/sqrt(2)))", Color::PURPLE);
+    window.addFunction(points, "The exact - sqrt(3)*tg(sqrt(3)x+pi/6)", Color::PURPLE);
 
     points.clear();
 
-    // неявная схема
+    float point = 0.3f;
+    bool pointCoincidence = false;
+    auto trueValue = function.getValue(point, res);
+    float curValue;
+
+    // явная схема
     std::cout << "Явная схема" << std::endl;
 
-    name = "y(n+1) = yn + (yn*yn+3)*t";
+    name = "Explicit scheme: y(n+1) = yn + t*(yn*yn+3)";
     std::cout << name << std::endl;
 
     t = 0.01;
@@ -67,24 +72,33 @@ int main() {
     for (int i{1}; i < iterations; ++i) {
         x = x+t;
 
-        float yx = (y0*y0+3)*t;
-        yn = y0 + yx;
+        yn = y0 + t*(y0*y0+3);
 
         points.emplace_back(x, yn);
         std::cout << "y(" << x << ") = " << yn << std::endl;
 
         y0 = yn;
+
+        if ((int)(x*100) == (int)(point*100)) {
+            curValue = yn;
+            pointCoincidence = true;
+        }
+    }
+    if (pointCoincidence) {
+        auto errorRate = abs(trueValue - curValue)/trueValue;
+        std::cout << "Погрешность:" << errorRate << std::endl;
     }
     window.addFunction(points, name, Color::BLUE);
     points.clear();
 
     // неявная схема
     std::cout << "Неявная схема" << std::endl;
-    name = "yn+1 = (sqrt(-8 * t^2 - 4 * yn * t + 1) / 2 - 0.5) / t";
+    name = "Implicit scheme: yn+1 = (1 - sqrt (1 - 4*t*y0 - 12*t*t)) / (2*t)";
     std::cout << name << std::endl;
 
+    pointCoincidence = false;
     t = 0.01;
-    iterations = 60;
+    iterations = 70;
     y0 = 1;
     yn = 0;
     x = 0;
@@ -95,27 +109,33 @@ int main() {
     for (int i{1}; i < iterations; ++i) {
         x = x+t;
 
-        float z = sqrt(-8 * t*t - 4 * y0 * t + 1);
-        z /= 2;
-        z += -0.5;
-
-        yn = - (z)/t;
+        yn = (1 - sqrt(1-4*t*y0 - 12*t*t))/(2*t);
 
         points.emplace_back(x, yn);
         std::cout << "y(" << x << ") = " << yn << std::endl;
 
         y0 = yn;
+
+        if ((int)(x*100) == (int)(point*100)) {
+            curValue = yn;
+            pointCoincidence = true;
+        }
+    }
+    if (pointCoincidence) {
+        auto errorRate = abs(trueValue - curValue)/trueValue;
+        std::cout << "Погрешность:" << errorRate << std::endl;
     }
     window.addFunction(points, name, Color::ORANGE);
     points.clear();
 
-    // неявная схема
+    // с весами
     std::cout << "C весами" << std::endl;
-    name = "yn+1 = (sqrt(- t^2 * yn - 3t^2 + 2t*yn + 12t - 11) -1) / t - 2";
+    name = "With scales: yn+1 = (sqrt(- t^2 * yn - 3t^2 + 2t*yn + 12t - 11) -1) / t - 2";
     std::cout << name << std::endl;
 
+    pointCoincidence = false;
     t = 0.01;
-    iterations = 20;
+    iterations = 50;
     std::complex<float>y{1};
     std::complex<float>yn2{0};
     x = 0;
@@ -135,16 +155,26 @@ int main() {
         std::cout << "y(" << x << ") = " << yn2 << std::endl;
 
         y = yn2;
-    }
-    window.addFunction(points, name, Color::BLACK);
 
-    window.setXStep(0.5);
-    window.setYStep(0.5);
+        if ((int)(x*100) == (int)(point*100)) {
+            curValue = yn2.real();
+            pointCoincidence = true;
+        }
+    }
+    if (pointCoincidence) {
+        auto errorRate = abs(trueValue - curValue)/trueValue;
+        std::cout << "Погрешность:" << errorRate << std::endl;
+    }
+
+    window.addFunction(points, name, Color::RED);
+
+    window.setXStep(0.1);
+    window.setYStep(0.1);
 
     window.setXPrecision(1);
-    window.setYPrecision(1);
+    window.setYPrecision(3);
 
-    window.setXOffset(1);
+    window.setXOffset(10);
     window.setYOffset(1);
 
     window.setView(-1, 0);

@@ -166,7 +166,7 @@ int main() {
     window.addFunction(points, name, Color::GREEN);
 
     window.setXStep(0.1);
-    window.setYStep(0.1);
+    window.setYStep(0.5);
 
     window.setXPrecision(1);
     window.setYPrecision(3);

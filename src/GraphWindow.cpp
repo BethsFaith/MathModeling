@@ -9,9 +9,10 @@ GraphWindow::GraphWindow(int width, int height, const char *title, Color backgro
     _axisColor = getColor(cAxes);
     _xOffset = 0;
     _yOffset = 0;
-    _scaleX = defaultSegSize;
-    _scaleY = defaultSegSize;
-    _axesStep = 1;
+    _xScale = defaultSegSize;
+    _yScale = defaultSegSize;
+    _xStep = 1;
+    _yStep = 1;
 
     _curFunctionIndex = -1;
 }
@@ -38,28 +39,55 @@ void GraphWindow::update(double deltaTime) {
     static const double zoomWheelSens = zoomKeysSens * 3;
 
     if (input.mouseWheelDelta == 1) {
-        _scaleX += _scaleX * deltaTime * zoomWheelSens;
-        _scaleY += _scaleY * deltaTime * zoomWheelSens;
-        _scaleX = std::min(_scaleX, (double)maxSegSize);
-        _scaleY = std::min(_scaleY, (double)maxSegSize);
+        _xScale -= _xScale * deltaTime * zoomWheelSens;
+        _yScale -= _yScale * deltaTime * zoomWheelSens;
+        _xScale = std::max(_xScale, (double)minSegSize);
+        _yScale = std::max(_yScale, (double)minSegSize);
+
+//        if (_yStep < 1000) {
+//            _yStep += _yStep * 0.1;
+//        }
+//        if (_xStep  < 1000) {
+//            _xStep += _xStep * 0.1;
+//        }
+//        if (_xPrecision < 5) {
+//            ++_xPrecision;
+//        }
+//        if (_yPrecision < 5) {
+//            ++_yPrecision;
+//        }
     }
     if (input.mouseWheelDelta == -1) {
-        _scaleX -= _scaleX * deltaTime * zoomWheelSens;
-        _scaleY -= _scaleY * deltaTime * zoomWheelSens;
-        _scaleX = std::max(_scaleX, (double)minSegSize);
-        _scaleY = std::max(_scaleY, (double)minSegSize);
+        _xScale += _xScale * deltaTime * zoomWheelSens;
+        _yScale += _yScale * deltaTime * zoomWheelSens;
+        _xScale = std::min(_xScale, (double)maxSegSize);
+        _yScale = std::min(_yScale, (double)maxSegSize);
+
+
+//        if (_yStep > 0.02) {
+//            _yStep -= _yStep * 0.1;
+//        }
+//        if (_xStep > 0.02) {
+//            _xStep -= _xStep * 0.1;
+//        }
+//        if (_xPrecision > 2) {
+//            --_xPrecision;
+//        }
+//        if (_yPrecision > 2) {
+//            --_yPrecision;
+//        }
     }
 
     static const double moveSens = 1 / 1e3;
 
     if (input.isKeyboardKeyPressed(sf::Keyboard::W))
-        _yOffset += deltaTime / _scaleY * moveSens;
+        _yOffset += deltaTime / _yScale * moveSens;
     if (input.isKeyboardKeyPressed(sf::Keyboard::A))
-        _xOffset -= deltaTime / _scaleX * moveSens;
+        _xOffset -= deltaTime / _xScale * moveSens;
     if (input.isKeyboardKeyPressed(sf::Keyboard::S))
-        _yOffset -= deltaTime / _scaleY * moveSens;
+        _yOffset -= deltaTime / _yScale * moveSens;
     if (input.isKeyboardKeyPressed(sf::Keyboard::D))
-        _xOffset += deltaTime / _scaleX * moveSens;
+        _xOffset += deltaTime / _xScale * moveSens;
     dragging();
 }
 
@@ -69,8 +97,8 @@ void GraphWindow::dragging() {
     if (input.isMouseButtonPressed(sf::Mouse::Left)) {
         int deltaX = input.mouseX - prevX;
         int deltaY = input.mouseY - prevY;
-        _xOffset -= deltaX / _scaleX;
-        _yOffset += deltaY / _scaleY;
+        _xOffset -= deltaX / _xScale;
+        _yOffset += deltaY / _yScale;
     }
     prevX = input.mouseX;
     prevY = input.mouseY;
@@ -81,7 +109,10 @@ void GraphWindow::display() {
 
     drawAxes();
 
-    construct(_functions.at(_curFunctionIndex));
+    for (auto func : _functions){
+        construct(func);
+    }
+//    construct(_functions.at(_curFunctionIndex));
 
     window.display();
 }
@@ -99,7 +130,7 @@ void GraphWindow::drawAxes() {
     static sf::Text markupText;
     static bool INIT = 0;
     if (!INIT) {
-        markupFont.loadFromFile("D:\\CPlusPlus\\Projects\\Labs\\Math\\Lab1_Koshi\\rsrc\\fonts\\calibri.ttf");
+        markupFont.loadFromFile("..\\..\\rsrc\\fonts\\calibri.ttf");
         markupText.setFont(markupFont);
         markupText.setCharacterSize(15);
         markupText.setFillColor(sf::Color::Black);
@@ -107,6 +138,8 @@ void GraphWindow::drawAxes() {
     }
 
     auto function = _functions[_curFunctionIndex];
+
+    window.setTitle(function.name);
 
     auto minX = std::min_element(function.points.begin(), function.points.end(),
                                  [](const Point& p1, const Point& p2) {
@@ -117,21 +150,10 @@ void GraphWindow::drawAxes() {
                                      return p1.x < p2.x;
                                  })->x;
 
-    int countMarks = std::abs((int)(minX - maxX)) + 2;
-//    _scaleX = width / countMarks / 2;
-//    if (_scaleX > defaultSegSize) {
-//        _scaleX = defaultSegSize;
-//    } else if (_scaleX < minSegSize) {
-//        _scaleX = minSegSize;
-//    }
-    if (countMarks > _axesStep) {
-        countMarks /= _axesStep;
-    }
-
-    for (int i = minX; i < maxX + 1; i += _axesStep) {
+    for (float i = minX; i < maxX + 1; i += _xStep) {
         Utilities::drawLine(window, toCrdX(i), toCrdY(0),
-                            toCrdX(i + _axesStep), toCrdY(0), _axisColor);
-        markupText.setString(std::to_string(i));
+                            toCrdX(i + _xStep), toCrdY(0), _axisColor);
+        markupText.setString(Utilities::dtos(i, _xPrecision));
         markupText.setPosition(toCrdX(i), toCrdY(0));
         window.draw(markupText);
     }
@@ -144,22 +166,20 @@ void GraphWindow::drawAxes() {
                                  [](const Point& p1, const Point& p2) {
                                      return p1.y < p2.y;
                                  })->y;
-    countMarks = (std::abs((int)maxY - (int)minY) + 2);
-//    _scaleY = height / countMarks / 2;
-//    if (_scaleY > defaultSegSize) {
-//        _scaleY = defaultSegSize;
-//    } else if (_scaleY < minSegSize) {
-//        _scaleY = minSegSize;
-//    }
-    if (countMarks > _axesStep) {
-        countMarks /= _axesStep;
+
+    for (float i = minY-1; i < maxY + 1; i += _yStep) {
+        Utilities::drawLine(window, toCrdX(0), toCrdY(i),
+                            toCrdX(0), toCrdY(i + _yStep), _axisColor);
+        markupText.setString(Utilities::dtos(i, _yPrecision));;
+        markupText.setPosition(toCrdX(0), toCrdY((i)));
+        window.draw(markupText);
     }
 
-    for (int i = (int)minY-1; i < maxY + 1;i += _axesStep) {
-        Utilities::drawLine(window, toCrdX(0), toCrdY(i),
-                            toCrdX(0), toCrdY(i+ _axesStep), _axisColor);
-        markupText.setString(std::to_string(i));
-        markupText.setPosition(toCrdX(0), toCrdY((i)));
+    for (int i{}; i < _functions.size(); ++i){
+        Utilities::drawLine(window, toCrdX(-1), toCrdY(i*0.5),
+                            toCrdX(-3), toCrdY(i*0.5), _functions.at(i).color);
+        markupText.setString(_functions.at(i).name);
+        markupText.setPosition(toCrdX(-3), toCrdY((i*0.5)));
         window.draw(markupText);
     }
 }
@@ -183,15 +203,43 @@ bool GraphWindow::onScreen(int cX, int cY) const {
 }
 
 int GraphWindow::toCrdX(double x) const {
-    auto res =  (x - _xOffset) * _scaleX + width / 2;
+    auto res = (x - _xOffset) * _xScale + width / 2;
     return res;
 }
 
 int GraphWindow::toCrdY(double y) const {
-    auto res =  -(y - _yOffset) * _scaleY + height / 2;
+    auto res = -(y - _yOffset) * _yScale + height / 2;
     return res;
 }
 
-void GraphWindow::setAxesStep(double axesStep) {
-    _axesStep = axesStep;
+void GraphWindow::setXPrecision(int xPrecision) {
+    _xPrecision = xPrecision;
+}
+
+void GraphWindow::setYPrecision(int yPrecision) {
+    _yPrecision = yPrecision;
+}
+
+void GraphWindow::setXStep(double xStep) {
+    _xStep = xStep;
+}
+
+void GraphWindow::setYStep(double yStep) {
+    _yStep = yStep;
+}
+
+void GraphWindow::setXOffset(double xOffset) {
+    _xOffset *= xOffset;
+}
+
+void GraphWindow::setYOffset(double yOffset) {
+    _yOffset *= yOffset;
+}
+
+void GraphWindow::setYScale(double yScale) {
+    _yScale = yScale;
+}
+
+void GraphWindow::setXScale(double xScale) {
+    _xScale = xScale;
 }

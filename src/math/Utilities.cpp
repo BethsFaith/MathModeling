@@ -68,8 +68,8 @@ namespace Utilities {
                                 sf::Vertex(sf::Vector2f(x2 + 1, y2 + 1), color) };
         window.draw(line, 2, sf::Lines);
     }
-    void setPixel(sf::RenderWindow& window, int x, int y, sf::Color color)
-    {
+
+    void setPixel(sf::RenderWindow& window, int x, int y, sf::Color color) {
         drawLine(window, x, y, x, y, color);
     }
 

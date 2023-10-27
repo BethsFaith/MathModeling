@@ -55,7 +55,7 @@ int main() {
     float curValue;
 
     // явная схема
-    std::cout << "Явная схема" << std::endl;
+    std::cout <<  std::endl << "Явная схема" << std::endl;
 
     name = "Explicit scheme: y(n+1) = yn + t*(yn*yn+3)";
     std::cout << name << std::endl;

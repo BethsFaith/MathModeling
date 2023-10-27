@@ -130,7 +130,7 @@ void GraphWindow::drawAxes() {
     static sf::Text markupText;
     static bool INIT = 0;
     if (!INIT) {
-        markupFont.loadFromFile("D:\\CPlusPlus\\Projects\\Labs\\Math\\Lab1_Koshi\\rsrc\\fonts\\calibri.ttf");
+        markupFont.loadFromFile("..\\..\\rsrc\\fonts\\calibri.ttf");
         markupText.setFont(markupFont);
         markupText.setCharacterSize(15);
         markupText.setFillColor(sf::Color::Black);
@@ -176,10 +176,10 @@ void GraphWindow::drawAxes() {
     }
 
     for (int i{}; i < _functions.size(); ++i){
-        Utilities::drawLine(window, toCrdX(-1), toCrdY(i),
-                            toCrdX(-3), toCrdY(i), _functions.at(i).color);
+        Utilities::drawLine(window, toCrdX(-1), toCrdY(i*0.5),
+                            toCrdX(-3), toCrdY(i*0.5), _functions.at(i).color);
         markupText.setString(_functions.at(i).name);
-        markupText.setPosition(toCrdX(-3), toCrdY((i)));
+        markupText.setPosition(toCrdX(-3), toCrdY((i*0.5)));
         window.draw(markupText);
     }
 }

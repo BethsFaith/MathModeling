@@ -24,6 +24,8 @@ void GraphWindow::start() {
 void GraphWindow::update(double deltaTime) {
     Window::update(deltaTime);
 
+    _lastDeltaTime = deltaTime;
+
     if (input.isKeyboardKeyPressed(sf::Keyboard::Left)){
         if (_curFunctionIndex > 0) {
             --_curFunctionIndex;
@@ -176,10 +178,10 @@ void GraphWindow::drawAxes() {
     }
 
     for (int i{}; i < _functions.size(); ++i){
-        Utilities::drawLine(window, toCrdX(-1), toCrdY(i*0.5),
-                            toCrdX(-3), toCrdY(i*0.5), _functions.at(i).color);
+        Utilities::drawLine(window, toCrdX(30), toCrdY((30+i)*0.5),
+                            toCrdX(40), toCrdY((30+i)*0.5), _functions.at(i).color);
         markupText.setString(_functions.at(i).name);
-        markupText.setPosition(toCrdX(-3), toCrdY((i*0.5)));
+        markupText.setPosition(toCrdX(30), toCrdY((30+i)*0.5));
         window.draw(markupText);
     }
 }
@@ -221,6 +223,20 @@ void GraphWindow::setYPrecision(int yPrecision) {
 }
 
 void GraphWindow::setXStep(double xStep) {
+    static const double zoomKeysSens = 1 / 2e5;
+    static const double zoomWheelSens = zoomKeysSens * 3;
+    for (int i = 0; i < _xStep - xStep; ++i) {
+        _xScale -= _xScale * _lastDeltaTime * zoomWheelSens;
+        _yScale -= _yScale * _lastDeltaTime * zoomWheelSens;
+        _xScale = std::max(_xScale, (double)minSegSize);
+        _yScale = std::max(_yScale, (double)minSegSize);
+    }
+    for (int i = 0; i < xStep - _xStep; ++i) {
+        _xScale += _xScale * _lastDeltaTime * zoomWheelSens;
+        _yScale += _yScale * _lastDeltaTime * zoomWheelSens;
+        _xScale = std::min(_xScale, (double)maxSegSize);
+        _yScale = std::min(_yScale, (double)maxSegSize);
+    }
     _xStep = xStep;
 }
 

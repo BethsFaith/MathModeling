@@ -16,7 +16,7 @@ public:
 
     bool isWholeNumber(double num);
 
-    void setArgument(const std::string &variable, double value);
+    void setVariable(const std::string &variable, double value);
 private:
     float last_y = 1;
 };

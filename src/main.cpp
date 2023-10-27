@@ -1,4 +1,4 @@
-#include "labs/Lab1.h"
+#include "labs/Lab2.h"
 
 static void pullDesktopResolution(int& horizontal, int& vertical)
 {
@@ -18,7 +18,7 @@ int main() {
     int width, height;
     pullDesktopResolution(width, height);
 
-    Lab1::work(width, height);
+    Lab2::work(width, height);
 
     return 0;
 }

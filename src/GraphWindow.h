@@ -69,6 +69,8 @@ private:
 
     sf::Color _axisColor;
 
+    double _lastDeltaTime;
+
     std::vector<DrawableFunction> _functions;
     int _curFunctionIndex;
 };

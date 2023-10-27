@@ -14,6 +14,7 @@
 #include "../math/DifFunction.h"
 
 class Lab1 {
+public:
     static void work(int width, int height);
 };
 

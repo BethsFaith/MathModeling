@@ -27,6 +27,6 @@ add_executable(Lab1_Koshi
         src/InputSystem.cpp
         src/GraphWindow.cpp
         src/math/DifFunction.cpp
-        )
+        src/labs/Lab1.cpp src/labs/Lab1.h)
 
 target_link_libraries(Lab1_Koshi ${CONAN_LIBS})

@@ -24,6 +24,8 @@ private:
     static std::vector<GraphWindow::Point> left(std::array<float, MaxX> Cx, float a);
     static std::vector<GraphWindow::Point> right(std::array<float, MaxX> Cx, float a);
     static std::vector<GraphWindow::Point> center(std::array<float, MaxX> Cx, float a);
+    static std::vector<GraphWindow::Point> cabaret(std::array<float, MaxX> Cx0, float a);
+    static std::vector<GraphWindow::Point> lincomb(std::array<float, MaxX> Cx0, float a);
 };
 
 

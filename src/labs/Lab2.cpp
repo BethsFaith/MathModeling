@@ -44,9 +44,8 @@ void Lab2::work(int width, int height) {
     window.setXOffset(250);
     window.setYOffset(0);
 
-    float y0 = 0, t = 0.1f, u = 0.6f;
-    int r = 10, x0 = 60, h = 1;
-    float a  = (u * t)/(float)h;
+    float t = 0.1f, u = 0.6f, h = 1;
+    float a  = (u * t)/h;
 
     std::array<float, 100> Cx{};
     for (int i{}; i < 60; ++i) {
@@ -74,19 +73,28 @@ void Lab2::work(int width, int height) {
         Cx[i] = 0;
     }
 
+//    points = left(Cx, a);
+//    window.addFunction(points, "left", Color::ORANGE);
+
     points.clear();
     std::cout << "Правый уголок" << std::endl;
 
     points = right(Cx, a);
     window.addFunction(points, "Right", Color::BLUE);
-
+//
     points = center(Cx, a);
     window.addFunction(points, "Center", Color::PURPLE);
+
+    points = cabaret(Cx, a);
+    window.addFunction(points, "Cabaret", Color::GREEN);
+
+    points = lincomb(Cx, a);
+    window.addFunction(points, "linkomb", Color::ORANGE);
 
     window.start();
 }
 
-std::vector<GraphWindow::Point> Lab2::left(std::array<float, 100> Cx, float a) {
+std::vector<GraphWindow::Point> Lab2::left(std::array<float, MaxX> Cx, float a) {
     std::vector<GraphWindow::Point> points;
 
     std::array<float, MaxN> CLastI{};
@@ -174,6 +182,92 @@ std::vector<GraphWindow::Point> Lab2::center(std::array<float, MaxX> Cx0, float 
     }
     for (int i{}; i < MaxX; ++i) {
         points.emplace_back(i, CN[i]);
+    }
+
+    return points;
+}
+
+std::vector<GraphWindow::Point> Lab2::cabaret(std::array<float, MaxX> Cx0, float a) {
+    std::vector<GraphWindow::Point> points;
+
+    std::array<float, MaxX> CLastN = Cx0;
+    std::array<float, MaxX> CN{}; // сначала нужно рассчитать
+    std::array<float, MaxX> CNextN{};
+
+    std::cout << std::endl << "n0 : ";
+    for (int i{}; i < MaxX; ++i) {
+        std::cout << " " << CLastN[i];
+    }
+
+    CLastN[MaxX-1] = 0;
+    CN[MaxX-1] =  0;
+
+    std::cout << std::endl << "n1 : ";
+    std::cout << " " << CN[MaxX-1];
+    for (int i{MaxX-2}; i >= 0; --i) {
+        CN[i] =  CLastN[i] + a*(CLastN[i+1] - CLastN[i]); // правый
+        std::cout << " " << CN[i];
+    }
+    for (int n = 1; n < MaxN; ++n) {
+        std::cout << std::endl << "n" << n << ": ";
+        std::cout << " " << 0;
+
+        CNextN[MaxX-1] =  0;
+
+        for (int i{MaxX-2}; i >= 0; --i) {
+            CNextN[i] = CN[i] - CN[i+1] + CLastN[i+1] * 2 * a * (CN[i+1] - CN[i]);
+            std::cout << " " << CNextN[i];
+        }
+
+        CLastN = CN;
+        CN = CNextN;
+    }
+    for (int i{}; i < MaxX; ++i) {
+        points.emplace_back(i, CNextN[i]);
+    }
+
+    return points;
+}
+
+std::vector<GraphWindow::Point> Lab2::lincomb(std::array<float, MaxX> Cx0, float a) {
+    std::vector<GraphWindow::Point> points;
+
+    std::array<float, MaxX> CLastN = Cx0;
+    std::array<float, MaxX> CN{}; // сначала нужно рассчитать
+    std::array<float, MaxX> CNextN{};
+
+    std::cout << std::endl << "n0 : ";
+    for (int i{}; i < MaxX; ++i) {
+        std::cout << " " << CLastN[i];
+    }
+
+    CLastN[MaxX-1] = 0;
+    CN[MaxX-1] =  0;
+
+    std::cout << std::endl << "n1 : ";
+    std::cout << " " << CN[MaxX-1];
+    for (int i{MaxX-2}; i >= 0; --i) {
+        CN[i] =  CLastN[i] + a*(CLastN[i+1] - CLastN[i]); // правый
+        std::cout << " " << CN[i];
+    }
+
+    for (int n = 1; n < MaxN; ++n) {
+        std::cout << std::endl << "n" << n << ": ";
+        std::cout << " " << 0;
+
+        CNextN[MaxX-1] =  0;
+        CN[0] = 0;
+
+        for (int i{MaxX-2}; i >= 1; --i) {
+            CNextN[i] = CN[i+1] - (CN[i+1] + CLastN[i+1])/2 - a * (CN[i-1] + 4 * CN[i] - 5 * CN[i+1])/4;
+            std::cout << " " << CNextN[i];
+        }
+
+        CLastN = CN;
+        CN = CNextN;
+    }
+    for (int i{}; i < MaxX; ++i) {
+        points.emplace_back(i, CNextN[i]);
     }
 
     return points;

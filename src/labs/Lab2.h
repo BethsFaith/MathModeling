@@ -19,7 +19,7 @@ public:
 
 private:
     static const int MaxX = 100;
-    static const int MaxN = 500;
+    static const int MaxN = 300;
 
     static std::vector<GraphWindow::Point> left(std::array<float, MaxX> Cx, float a);
     static std::vector<GraphWindow::Point> right(std::array<float, MaxX> Cx, float a);

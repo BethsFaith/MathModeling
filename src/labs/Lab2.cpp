@@ -78,11 +78,10 @@ void Lab2::work(int width, int height) {
     std::cout << "Правый уголок" << std::endl;
 
     points = right(Cx, a);
-//    window.addFunction(points, "Right", Color::BLUE);
-
+    window.addFunction(points, "Right", Color::BLUE);
 
     points = center(Cx, a);
-    window.addFunction(points, "Center", Color::PINK);
+    window.addFunction(points, "Center", Color::PURPLE);
 
     window.start();
 }
@@ -155,13 +154,22 @@ std::vector<GraphWindow::Point> Lab2::center(std::array<float, MaxX> Cx0, float 
     std::array<float, MaxX> CLastN = Cx0;
     std::array<float, MaxX> CN{};
 
-    for (int n = 0; n < MaxN-1; ++n) {
-        CN[0] = CLastN[0];
-        CN[MaxX - 1] = CLastN[MaxX - 1];
+    std::cout << std::endl << "n0 : ";
+    for (int i{}; i < MaxX; ++i) {
+        std::cout << " " << CLastN[i];
+    }
 
+    for (int n = 1; n < MaxN; ++n) {
+        CN[0] = 0;
+        CN[MaxX-1] = 0;
+
+        std::cout << std::endl << "n" << n << ": ";
+        std::cout << " " << CN[0];
         for (int i{1}; i < MaxX-1; ++i) {
-            CN[i] = CN[i - 1] + a * ((CLastN[i+1] - CLastN[i-1]) / 2);
+            CN[i] = CLastN[i] - a * ((CLastN[i+1] - CLastN[i-1]) / 2);
+            std::cout << " " << CN[i];
         }
+        std::cout << " " << CN[MaxX-1];
         CLastN = CN;
     }
     for (int i{}; i < MaxX; ++i) {

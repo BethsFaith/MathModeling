@@ -16,6 +16,14 @@
 class Lab2 {
 public:
     static void work(int width, int height);
+
+private:
+    static const int MaxX = 100;
+    static const int MaxN = 500;
+
+    static std::vector<GraphWindow::Point> left(std::array<float, MaxX> Cx, float a);
+    static std::vector<GraphWindow::Point> right(std::array<float, MaxX> Cx, float a);
+    static std::vector<GraphWindow::Point> center(std::array<float, MaxX> Cx, float a);
 };
 
 

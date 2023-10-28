@@ -152,6 +152,8 @@ void GraphWindow::drawAxes() {
                                      return p1.x < p2.x;
                                  })->x;
 
+    minX = std::min(0.0f, minX);
+
     for (float i = minX; i < maxX + 1; i += _xStep) {
         Utilities::drawLine(window, toCrdX(i), toCrdY(0),
                             toCrdX(i + _xStep), toCrdY(0), _axisColor);
@@ -168,6 +170,8 @@ void GraphWindow::drawAxes() {
                                  [](const Point& p1, const Point& p2) {
                                      return p1.y < p2.y;
                                  })->y;
+
+    minY = std::min(0.0f, minX);
 
     for (float i = minY-1; i < maxY + 1; i += _yStep) {
         Utilities::drawLine(window, toCrdX(0), toCrdY(i),
@@ -258,4 +262,8 @@ void GraphWindow::setYScale(double yScale) {
 
 void GraphWindow::setXScale(double xScale) {
     _xScale = xScale;
+}
+
+void GraphWindow::clean() {
+    _functions.clear();
 }

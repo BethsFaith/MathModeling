@@ -41,6 +41,8 @@ public:
     void setYScale(double yScale);
     void setXScale(double xScale);
 
+    void clean();
+
 protected:
     void update(double deltaTime) override;
     void display() override;

@@ -95,37 +95,6 @@ void Lab2::work(int width, int height) {
     window.start();
 }
 
-std::vector<GraphWindow::Point> Lab2::left(std::array<float, MaxX> Cx, float a) {
-    std::vector<GraphWindow::Point> points;
-
-    std::array<float, MaxN> CLastI{};
-    std::array<float, MaxN> Ci{};
-
-    std::cout << std::endl << "i" << 0 << ": ";
-    for (int n{0}; n < MaxN; ++n) {
-        CLastI[n] = 0;
-        std::cout << " " << CLastI[n];
-    }
-
-    std::cout << "Левый уголок" << std::endl;
-    for (int i = 1; i < MaxX; ++i) {
-        std::cout << std::endl << "i" << i << ": ";
-        Ci[0] = Cx[i];
-        std::cout << " " << Ci[0];
-        for (int n = 0; n < MaxN - 1; ++n) {
-            auto y = (CLastI[n] + Ci[n]) / 2;
-            Ci[n + 1] = y;
-            std::cout << " " << Ci[n + 1];
-        }
-        points.emplace_back(i, MaxN-1);
-        CLastI = Ci;
-    }
-    std::sort(points.begin(), points.end(), [](GraphWindow::Point A, GraphWindow::Point B){
-        return A.x < B.x;
-    });
-    return points;
-}
-
 std::vector<GraphWindow::Point> Lab2::right(std::array<float, MaxX> Cx, float a) {
     std::vector<GraphWindow::Point> points;
 
@@ -273,3 +242,34 @@ std::vector<GraphWindow::Point> Lab2::lincomb(std::array<float, MaxX> Cx0, float
 
     return points;
 }
+
+//std::vector<GraphWindow::Point> Lab2::left(std::array<float, MaxX> Cx, float a) {
+//    std::vector<GraphWindow::Point> points;
+//
+//    std::array<float, MaxN> CLastI{};
+//    std::array<float, MaxN> Ci{};
+//
+//    std::cout << std::endl << "i" << 0 << ": ";
+//    for (int n{0}; n < MaxN; ++n) {
+//        CLastI[n] = 0;
+//        std::cout << " " << CLastI[n];
+//    }
+//
+//    std::cout << "Левый уголок" << std::endl;
+//    for (int i = 1; i < MaxX; ++i) {
+//        std::cout << std::endl << "i" << i << ": ";
+//        Ci[0] = Cx[i];
+//        std::cout << " " << Ci[0];
+//        for (int n = 0; n < MaxN - 1; ++n) {
+//            auto y = (CLastI[n] + Ci[n]) / 2;
+//            Ci[n + 1] = y;
+//            std::cout << " " << Ci[n + 1];
+//        }
+//        points.emplace_back(i, MaxN-1);
+//        CLastI = Ci;
+//    }
+//    std::sort(points.begin(), points.end(), [](GraphWindow::Point A, GraphWindow::Point B){
+//        return A.x < B.x;
+//    });
+//    return points;
+//}

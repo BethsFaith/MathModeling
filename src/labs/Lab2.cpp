@@ -73,15 +73,12 @@ void Lab2::work(int width, int height) {
         Cx[i] = 0;
     }
 
-//    points = left(Cx, a);
-//    window.addFunction(points, "left", Color::ORANGE);
-
     points.clear();
     std::cout << "Правый уголок" << std::endl;
 
     points = right(Cx, a);
     window.addFunction(points, "Right", Color::BLUE);
-//
+
     points = center(Cx, a);
     window.addFunction(points, "Center", Color::PURPLE);
 

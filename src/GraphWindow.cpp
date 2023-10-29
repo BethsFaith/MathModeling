@@ -114,7 +114,6 @@ void GraphWindow::display() {
     for (auto func : _functions){
         construct(func);
     }
-//    construct(_functions.at(_curFunctionIndex));
 
     window.display();
 }
@@ -156,7 +155,7 @@ void GraphWindow::drawAxes() {
 
     for (float i = minX; i < maxX + 1; i += _xStep) {
         Utilities::drawLine(window, toCrdX(i), toCrdY(0),
-                            toCrdX(i + _xStep), toCrdY(0), _axisColor);
+                            toCrdX(i + _xStep), toCrdY(0), _axisColor, 2);
         markupText.setString(Utilities::dtos(i, _xPrecision));
         markupText.setPosition(toCrdX(i), toCrdY(0));
         window.draw(markupText);
@@ -175,15 +174,15 @@ void GraphWindow::drawAxes() {
 
     for (float i = minY-1; i < maxY + 1; i += _yStep) {
         Utilities::drawLine(window, toCrdX(0), toCrdY(i),
-                            toCrdX(0), toCrdY(i + _yStep), _axisColor);
+                            toCrdX(0), toCrdY(i + _yStep), _axisColor, 2);
         markupText.setString(Utilities::dtos(i, _yPrecision));;
         markupText.setPosition(toCrdX(0), toCrdY((i)));
         window.draw(markupText);
     }
 
     for (int i{}; i < _functions.size(); ++i){
-        Utilities::drawLine(window, toCrdX(30), toCrdY((30+i)*0.5),
-                            toCrdX(40), toCrdY((30+i)*0.5), _functions.at(i).color);
+        Utilities::drawLine(window, toCrdX(30), toCrdY((30 + i) * 0.5),
+                            toCrdX(40), toCrdY((30 + i) * 0.5), _functions.at(i).color, 2);
         markupText.setString(_functions.at(i).name);
         markupText.setPosition(toCrdX(30), toCrdY((30+i)*0.5));
         window.draw(markupText);
@@ -194,7 +193,8 @@ void GraphWindow::construct(DrawableFunction &function) {
     auto &points = function.points;
     for (int i{}; i < points.size()-1; ++i) {
         Utilities::drawLine(window, toCrdX(points.at(i).x), toCrdY(points.at(i).y),
-                            toCrdX(points.at(i+1).x),  toCrdY(points.at(i+1).y), function.color);
+                            toCrdX(points.at(i + 1).x), toCrdY(points.at(i + 1).y), function.color,
+                            3);
     }
 }
 

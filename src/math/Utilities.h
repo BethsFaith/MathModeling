@@ -19,7 +19,7 @@ namespace Utilities {
 
     void line(sf::Image& image, int x1, int y1, int x2, int y2, sf::Color color);
 
-    void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color);
+    void drawLine(sf::RenderWindow &window, int x1, int y1, int x2, int y2, sf::Color color, int width = 3);
     void setPixel(sf::RenderWindow& window, int x, int y, sf::Color color);
 
     void cursorRestriction(const sf::RenderWindow& window);

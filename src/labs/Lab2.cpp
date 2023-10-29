@@ -168,13 +168,13 @@ std::vector<GraphWindow::Point> Lab2::center(std::array<float, MaxX> Cx0, float 
     }
 
     for (int n = 1; n < MaxN; ++n) {
-        CN[0] = 0;
-        CN[MaxX-1] = 0;
+        CN[0] = Cx0[0];
+        CN[MaxX-1] = Cx0[MaxX-1];
 
         std::cout << std::endl << "n" << n << ": ";
         std::cout << " " << CN[0];
         for (int i{1}; i < MaxX-1; ++i) {
-            CN[i] = CLastN[i] - a * ((CLastN[i+1] - CLastN[i-1]) / 2);
+            CN[i] = CLastN[i] + a * ((CLastN[i+1] - CLastN[i-1]) / 2);
             std::cout << " " << CN[i];
         }
         std::cout << " " << CN[MaxX-1];
@@ -199,8 +199,8 @@ std::vector<GraphWindow::Point> Lab2::cabaret(std::array<float, MaxX> Cx0, float
         std::cout << " " << CLastN[i];
     }
 
-    CLastN[MaxX-1] = 0;
-    CN[MaxX-1] =  0;
+    CLastN[MaxX-1] = Cx0[MaxX-1];
+    CN[MaxX-1] =  Cx0[MaxX-1];
 
     std::cout << std::endl << "n1 : ";
     std::cout << " " << CN[MaxX-1];
@@ -215,7 +215,7 @@ std::vector<GraphWindow::Point> Lab2::cabaret(std::array<float, MaxX> Cx0, float
         CNextN[MaxX-1] =  0;
 
         for (int i{MaxX-2}; i >= 0; --i) {
-            CNextN[i] = CN[i] - CN[i+1] + CLastN[i+1] * 2 * a * (CN[i+1] - CN[i]);
+            CNextN[i] = CN[i] - CN[i+1] + CLastN[i+1] + 2 * a * (CN[i+1] - CN[i]);
             std::cout << " " << CNextN[i];
         }
 
@@ -259,7 +259,7 @@ std::vector<GraphWindow::Point> Lab2::lincomb(std::array<float, MaxX> Cx0, float
         CN[0] = 0;
 
         for (int i{MaxX-2}; i >= 1; --i) {
-            CNextN[i] = CN[i+1] - (CN[i+1] + CLastN[i+1])/2 - a * (CN[i-1] + 4 * CN[i] - 5 * CN[i+1])/4;
+            CNextN[i] = CN[i] - (CN[i+1] - CLastN[i+1])/2 - a * (CN[i-1] + 4 * CN[i] - 5 * CN[i+1])/4;
             std::cout << " " << CNextN[i];
         }
 

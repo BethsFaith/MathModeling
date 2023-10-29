@@ -74,17 +74,21 @@ void Lab2::work(int width, int height) {
     }
 
     points.clear();
-    std::cout << "Правый уголок" << std::endl;
+    std::cout << "\n\nПравый уголок" << std::endl;
 
     points = right(Cx, a);
     window.addFunction(points, "Right", Color::BLUE);
 
+    std::cout << "\n\nЦентр" << std::endl;
+
     points = center(Cx, a);
     window.addFunction(points, "Center", Color::PURPLE);
 
+    std::cout << "\n\nКабарe" << std::endl;
     points = cabaret(Cx, a);
     window.addFunction(points, "Cabaret", Color::GREEN);
 
+    std::cout << "\n\nЛинкомб" << std::endl;
     points = lincomb(Cx, a);
     window.addFunction(points, "linkomb", Color::ORANGE);
 

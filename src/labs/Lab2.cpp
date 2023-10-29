@@ -39,7 +39,7 @@ void Lab2::work(int width, int height) {
     window.setYStep(0.25);
 
     window.setXPrecision(0);
-    window.setYPrecision(3);
+    window.setYPrecision(2);
 
     window.setXOffset(250);
     window.setYOffset(0);
@@ -90,7 +90,7 @@ void Lab2::work(int width, int height) {
 
     std::cout << "\n\nЛинкомб" << std::endl;
     points = lincomb(Cx, a);
-    window.addFunction(points, "linkomb", Color::ORANGE);
+    window.addFunction(points, "Linkomb", Color::ORANGE);
 
     window.start();
 }

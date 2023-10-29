@@ -64,7 +64,6 @@ private:
     double _yScale{};
     double _xOffset{};
     double _yOffset{};
-    int _curMark{};
 
     int _xPrecision{3};
     int _yPrecision{3};

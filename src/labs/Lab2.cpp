@@ -5,7 +5,7 @@
 #include "Lab2.h"
 
 void Lab2::work(int width, int height) {
-    GraphWindow window(width, height, "Koshi", Color::WHITE, Color::GREY);
+    GraphWindow window(1440, 720, "Koshi", Color::WHITE, Color::GREY);
 
     std::vector<GraphWindow::Point> points;
 
@@ -33,13 +33,13 @@ void Lab2::work(int width, int height) {
             std::cout << "Не получилось получить значение на точке с x = " << i;
         }
     }
-    window.addFunction(points, "y = (x-60)/10; y = -(x-70)/10", Color::RED);
+    window.addFunction(points, "y1 = (x-60)/10; \ny2 = -(x-70)/10", Color::RED);
 
     window.setXStep(20);
-    window.setYStep(1);
+    window.setYStep(0.25);
 
     window.setXPrecision(0);
-    window.setYPrecision(0);
+    window.setYPrecision(3);
 
     window.setXOffset(250);
     window.setYOffset(0);

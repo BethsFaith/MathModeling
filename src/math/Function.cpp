@@ -6,7 +6,8 @@
 
 #include <utility>
 
-Function::Function(const std::string &function, std::string argument) : _expression(function), _argument(std::move(argument)) {}
+Function::Function(const std::string &function, std::string argument)
+: _expression(function), _argument(std::move(argument)) {}
 
 double Function::getValue(double x, bool &success) {
     _expression.setArgument(_argument, x);
@@ -19,4 +20,8 @@ double Function::getValue(double x, bool &success) {
 
 std::string Function::getArgument() {
     return _argument;
+}
+
+void Function::setVariable(const std::string &variable, double value) {
+    _expression.setArgument(variable, value);
 }

@@ -41,6 +41,8 @@ public:
     void setYScale(double yScale);
     void setXScale(double xScale);
 
+    void clean();
+
 protected:
     void update(double deltaTime) override;
     void display() override;
@@ -62,12 +64,13 @@ private:
     double _yScale{};
     double _xOffset{};
     double _yOffset{};
-    int _curMark{};
 
     int _xPrecision{3};
     int _yPrecision{3};
 
     sf::Color _axisColor;
+
+    double _lastDeltaTime;
 
     std::vector<DrawableFunction> _functions;
     int _curFunctionIndex;

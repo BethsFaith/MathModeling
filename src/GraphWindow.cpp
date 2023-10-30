@@ -24,6 +24,8 @@ void GraphWindow::start() {
 void GraphWindow::update(double deltaTime) {
     Window::update(deltaTime);
 
+    _lastDeltaTime = deltaTime;
+
     if (input.isKeyboardKeyPressed(sf::Keyboard::Left)){
         if (_curFunctionIndex > 0) {
             --_curFunctionIndex;
@@ -39,10 +41,10 @@ void GraphWindow::update(double deltaTime) {
     static const double zoomWheelSens = zoomKeysSens * 3;
 
     if (input.mouseWheelDelta == 1) {
-        _xScale -= _xScale * deltaTime * zoomWheelSens;
-        _yScale -= _yScale * deltaTime * zoomWheelSens;
-        _xScale = std::max(_xScale, (double)minSegSize);
-        _yScale = std::max(_yScale, (double)minSegSize);
+        _xScale += _xScale * deltaTime * zoomWheelSens;
+        _yScale += _yScale * deltaTime * zoomWheelSens;
+        _xScale = std::min(_xScale, (double)maxSegSize);
+        _yScale = std::min(_yScale, (double)maxSegSize);
 
 //        if (_yStep < 1000) {
 //            _yStep += _yStep * 0.1;
@@ -58,10 +60,10 @@ void GraphWindow::update(double deltaTime) {
 //        }
     }
     if (input.mouseWheelDelta == -1) {
-        _xScale += _xScale * deltaTime * zoomWheelSens;
-        _yScale += _yScale * deltaTime * zoomWheelSens;
-        _xScale = std::min(_xScale, (double)maxSegSize);
-        _yScale = std::min(_yScale, (double)maxSegSize);
+        _xScale -= _xScale * deltaTime * zoomWheelSens;
+        _yScale -= _yScale * deltaTime * zoomWheelSens;
+        _xScale = std::max(_xScale, (double)minSegSize);
+        _yScale = std::max(_yScale, (double)minSegSize);
 
 
 //        if (_yStep > 0.02) {
@@ -112,7 +114,6 @@ void GraphWindow::display() {
     for (auto func : _functions){
         construct(func);
     }
-//    construct(_functions.at(_curFunctionIndex));
 
     window.display();
 }
@@ -150,10 +151,13 @@ void GraphWindow::drawAxes() {
                                      return p1.x < p2.x;
                                  })->x;
 
-    for (float i = minX; i < maxX + 1; i += _xStep) {
-        Utilities::drawLine(window, toCrdX(i), toCrdY(0),
-                            toCrdX(i + _xStep), toCrdY(0), _axisColor);
-        markupText.setString(Utilities::dtos(i, _xPrecision));
+    minX = std::min(0.0f, minX);
+
+    auto iterations = (maxX - minX)/_xStep + 2;
+    for (float i = 0; i < iterations; ++i) {
+        Utilities::drawLine(window, toCrdX(minX + i*_xStep), toCrdY(0),
+                            toCrdX(minX + (i+1)*_xStep), toCrdY(0), _axisColor, 2);
+        markupText.setString(Utilities::dtos(minX + i*_xStep, _xPrecision));
         markupText.setPosition(toCrdX(i), toCrdY(0));
         window.draw(markupText);
     }
@@ -167,19 +171,26 @@ void GraphWindow::drawAxes() {
                                      return p1.y < p2.y;
                                  })->y;
 
-    for (float i = minY-1; i < maxY + 1; i += _yStep) {
-        Utilities::drawLine(window, toCrdX(0), toCrdY(i),
-                            toCrdX(0), toCrdY(i + _yStep), _axisColor);
-        markupText.setString(Utilities::dtos(i, _yPrecision));;
+    minY = std::min(0.0f, minY);
+
+    iterations = (maxY - minY)/_yStep + 1;
+    for (float i = 0; i < iterations; ++i) {
+        Utilities::drawLine(window, toCrdX(0), toCrdY(minY + i * _xStep),
+                            toCrdX(0), toCrdY(minY + (i+1) * _xStep), _axisColor, 2);
+        markupText.setString(Utilities::dtos(minY + i*_yStep, _yPrecision));;
         markupText.setPosition(toCrdX(0), toCrdY((i)));
         window.draw(markupText);
     }
 
     for (int i{}; i < _functions.size(); ++i){
-        Utilities::drawLine(window, toCrdX(-1), toCrdY(i*0.5),
-                            toCrdX(-3), toCrdY(i*0.5), _functions.at(i).color);
+        auto crdX1 = width*0.9;
+        auto crdX2 =width*0.95;
+        auto crdY =  height*0.1 + height*0.05*i;
+
+        Utilities::drawLine(window, crdX1, crdY,
+                            crdX2, crdY, _functions.at(i).color, 2);
         markupText.setString(_functions.at(i).name);
-        markupText.setPosition(toCrdX(-3), toCrdY((i*0.5)));
+        markupText.setPosition(crdX1, crdY);
         window.draw(markupText);
     }
 }
@@ -187,8 +198,9 @@ void GraphWindow::drawAxes() {
 void GraphWindow::construct(DrawableFunction &function) {
     auto &points = function.points;
     for (int i{}; i < points.size()-1; ++i) {
-        Utilities::drawLine(window, toCrdX(points.at(i).x), toCrdY(points.at(i).y),
-                            toCrdX(points.at(i+1).x),  toCrdY(points.at(i+1).y), function.color);
+        Utilities::drawLine(window, toCrdX(points.at(i).x / _xStep), toCrdY(points.at(i).y / _yStep),
+                            toCrdX(points.at(i + 1).x / _xStep), toCrdY(points.at(i + 1).y / _yStep), function.color,
+                            3);
     }
 }
 
@@ -221,6 +233,20 @@ void GraphWindow::setYPrecision(int yPrecision) {
 }
 
 void GraphWindow::setXStep(double xStep) {
+//    static const double zoomKeysSens = 1 / 2e5;
+//    static const double zoomWheelSens = zoomKeysSens * 3;
+//    for (int i = 0; i < _xStep - xStep; ++i) {
+//        _xScale -= _xScale * _lastDeltaTime * zoomWheelSens;
+//        _yScale -= _yScale * _lastDeltaTime * zoomWheelSens;
+//        _xScale = std::max(_xScale, (double)minSegSize);
+//        _yScale = std::max(_yScale, (double)minSegSize);
+//    }
+//    for (int i = 0; i < xStep - _xStep; ++i) {
+//        _xScale += _xScale * _lastDeltaTime * zoomWheelSens;
+//        _yScale += _yScale * _lastDeltaTime * zoomWheelSens;
+//        _xScale = std::min(_xScale, (double)maxSegSize);
+//        _yScale = std::min(_yScale, (double)maxSegSize);
+//    }
     _xStep = xStep;
 }
 
@@ -242,4 +268,8 @@ void GraphWindow::setYScale(double yScale) {
 
 void GraphWindow::setXScale(double xScale) {
     _xScale = xScale;
+}
+
+void GraphWindow::clean() {
+    _functions.clear();
 }

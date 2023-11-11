@@ -74,6 +74,11 @@ void Lab3::work(int width, int height) {
     points = implicitScheme(Cx);
     window.addFunction(points, "Implicit", Color::GREEN);
 
+    std::cout << "\n\nАналитическая" << std::endl;
+
+    points = analyticScheme(Cx);
+    window.addFunction(points, "Analytic", Color::PURPLE);
+
     window.setXStep(20);
     window.setYStep(0.25);
 
@@ -135,11 +140,11 @@ std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxX> Cx0
     }
 
     float ai, bi, ci, fi;
-    for (int time = 0; time < 100; time += (t*100)) {
+    for (int time = 0; time < MaxN; time += (t*100)) {
         CN[0] = Cx0[0];
         CN[MaxX-1] = Cx0[MaxX-1];
 
-        std::cout << std::endl << "n" << time << ": ";
+        std::cout << std::endl << "t" << ((float)time/100) << ": ";
         for (int i{1}; i < MaxX-1; ++i) {
             ai = k / (h * h);
             bi = 2 * ai + 1 / t;
@@ -153,6 +158,32 @@ std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxX> Cx0
             std::cout << " " << CN[i];
         }
         std::cout << " " << CN[MaxX-1];
+    }
+    for (int i{}; i < MaxX; ++i) {
+        points.emplace_back(i, CN[i]);
+    }
+
+    return points;
+}
+
+std::vector<GraphWindow::Point> Lab3::analyticScheme(std::array<float, MaxX> Cx0) {
+    std::vector<GraphWindow::Point> points;
+    auto w = 3.1415926f/MaxN;
+
+    float a  = (u * t)/h;
+
+    std::array<float, MaxX> CLastN = Cx0;
+    std::array<float, MaxX> CN{};
+
+    float C0, sinValue, expValue;
+
+    for (int n{1}; n < MaxN; ++n) {
+        for (int i{1}; i < MaxX; ++i) {
+            sinValue = sin(n * i * w);
+            C0 = CLastN[i] * sinValue / 50;
+            expValue = exp(a * (w*w) * t);
+            CN[i] += C0 * expValue * sinValue;
+        }
     }
     for (int i{}; i < MaxX; ++i) {
         points.emplace_back(i, CN[i]);

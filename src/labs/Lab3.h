@@ -27,6 +27,7 @@ private:
 
     static std::vector<GraphWindow::Point> explicitScheme(std::array<float, MaxX> Cx0);
     static std::vector<GraphWindow::Point> implicitScheme(std::array<float, MaxX> Cx0);
+    static std::vector<GraphWindow::Point> analyticScheme(std::array<float, MaxX> Cx0);
 };
 
 

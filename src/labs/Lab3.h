@@ -18,16 +18,15 @@ public:
     static void work(int width, int height);
 
 private:
-    static const int MaxX = 100;
-    static const int MaxN = 300;
-    static constexpr float t = 0.01f;
-    static constexpr float h = 1;
-    static constexpr float k = 0.1f;
-    static constexpr float u = 0.6f;
+    static const int MaxN = 100;
+    static constexpr double T = 100;
+    static constexpr float ht = 0.1f;
+    static constexpr float hx = 1;
+    static constexpr float a = 1;
 
-    static std::vector<GraphWindow::Point> explicitScheme(std::array<float, MaxX> Cx0);
-    static std::vector<GraphWindow::Point> implicitScheme(std::array<float, MaxX> Cx0);
-    static std::vector<GraphWindow::Point> analyticScheme(std::array<float, MaxX> Cx0);
+    static std::vector<GraphWindow::Point> explicitScheme(std::array<float, MaxN+1> Cx0);
+    static std::vector<GraphWindow::Point> implicitScheme(std::array<float, MaxN+1> Cx0);
+    static std::vector<GraphWindow::Point> analyticScheme(std::array<float, MaxN+1> Cx0);
 };
 
 

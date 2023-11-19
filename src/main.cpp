@@ -18,7 +18,7 @@ int main() {
     int width, height;
     pullDesktopResolution(width, height);
 
-    Lab3::work(width, height);
+    Lab3::work(1440, 720);
 
     return 0;
 }

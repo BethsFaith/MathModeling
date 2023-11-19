@@ -5,7 +5,7 @@
 #include "Lab3.h"
 
 void Lab3::work(int width, int height) {
-    GraphWindow window(1440, 720, "Koshi", Color::WHITE, Color::GREY);
+    GraphWindow window(width, height, "Koshi", Color::WHITE, Color::GREY);
 
     std::vector<GraphWindow::Point> points;
 
@@ -36,7 +36,7 @@ void Lab3::work(int width, int height) {
     window.addFunction(points, "y1 = (x-60)/10; \ny2 = -(x-70)/10", Color::RED);
 
     // подготовка
-    std::array<float, 100> Cx{};
+    std::array<float, MaxN + 1> Cx{};
     for (int i{}; i < 60; ++i) {
         Cx[i] = 0;
     }
@@ -58,7 +58,7 @@ void Lab3::work(int width, int height) {
             std::cout << "Не получилось получить значение на точке с x = " << i;
         }
     }
-    for (int i{81}; i < MaxX; ++i) {
+    for (int i{81}; i < MaxN + 1; ++i) {
         Cx[i] = 0;
     }
 
@@ -90,103 +90,138 @@ void Lab3::work(int width, int height) {
     window.start();
 }
 
-std::vector<GraphWindow::Point> Lab3::explicitScheme(std::array<float, MaxX> Cx0) {
+std::vector<GraphWindow::Point> Lab3::explicitScheme(std::array<float, MaxN + 1> Cx0) {
     std::vector<GraphWindow::Point> points;
 
-    float a  = (u * t)/h;
-
-    std::array<float, MaxX> CLastN = Cx0;
-    std::array<float, MaxX> CN{};
+    std::array<float, MaxN + 1> qLast = Cx0;
+    std::array<float, MaxN + 1> q{};
 
     std::cout << std::endl << "n0 : ";
-    for (int i{}; i < MaxX; ++i) {
-        std::cout << " " << CLastN[i];
+    for (int i{}; i < MaxN + 1; ++i) {
+        std::cout << " " << qLast[i];
     }
 
-    float tn = 0;
-    for (int n = 1; n < MaxN; ++n) {
-        CN[0] = Cx0[0];
-        CN[MaxX-1] = Cx0[MaxX-1];
+    double t = 0;
+    do {
+        std::cout << std::endl << "t" << t << ": ";
 
-        tn += h*t;
+        for (int i = 1; i < MaxN; ++i) {
+            q[i] = qLast[i] + (a * ht) * (qLast[i + 1] - 2 * qLast[i] + qLast[i - 1] / (hx * hx));
 
-        std::cout << std::endl << "n" << n << ": ";
-        std::cout << " " << CN[0];
-        for (int i{1}; i < MaxX-1; ++i) {
-            CN[i] = CLastN[i] + a * h * tn * ((CLastN[i+1] - 2 * CLastN[i] + CLastN[i-1]) / (h*h));
-            std::cout << " " << CN[i];
+            std::cout << " " << q[i];
         }
-        std::cout << " " << CN[MaxX-1];
-        CLastN = CN;
-    }
-    for (int i{}; i < MaxX; ++i) {
-        points.emplace_back(i, CN[i]);
+        qLast = q;
+        t = t + ht;
+    } while (t < T + ht / 2);
+
+    for (int i{}; i < MaxN + 1; ++i) {
+        points.emplace_back(i, q[i]);
     }
 
     return points;
 }
 
-std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxX> Cx0) {
+std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxN + 1> Cx0) {
     std::vector<GraphWindow::Point> points;
 
-    std::array<float, MaxX> alpha{};
-    std::array<float, MaxX> beta{};
-    std::array<float, MaxX> CLastN = Cx0;
-    std::array<float, MaxX> CN{};
+    std::array<float, MaxN + 1> qLast = Cx0;
+    std::array<float, MaxN + 1> q{};
+
+    std::array<float, MaxN + 1> alpha{};
+    std::array<float, MaxN + 1> beta{};
 
     std::cout << std::endl << "n0 : ";
-    for (int i{}; i < MaxX; ++i) {
-        std::cout << " " << CLastN[i];
+    for (int i{}; i < MaxN + 1; ++i) {
+        alpha[i] = 0;
+        beta[i] = 0;
+
+        std::cout << " " << qLast[i];
     }
 
-    float ai, bi, ci, fi;
-    for (int time = 0; time < MaxN; time += (t*100)) {
-        CN[0] = Cx0[0];
-        CN[MaxX-1] = Cx0[MaxX-1];
+    double t = 0;
+    do {
+        std::cout << std::endl << "t" << t << ": ";
 
-        std::cout << std::endl << "t" << ((float)time/100) << ": ";
-        for (int i{1}; i < MaxX-1; ++i) {
-            ai = k / (h * h);
-            bi = 2 * ai + 1 / t;
-            ci = ai;
-            fi = -1 * CLastN[i] / t;
+        for (int i = 1; i < MaxN; ++i) {
+            float ai = ht / (hx * hx);
+            float bi = 2 * ai + 1 / ht;
+            float ci = ai;
+            float fi = -1 * qLast[i] / ht;
 
-            alpha[i] = ai / (bi - ci * alpha[i-1]);
-            beta[i] = (ci * beta[i - 1] - fi)/(bi - ci * alpha[i-1]);
-
-            CN[i] = alpha[i]*CLastN[i+1]+beta[i];
-            std::cout << " " << CN[i];
+            alpha[i] = ai / (bi - ci * alpha[i - 1]);
+            beta[i] = (ci * beta[i - 1] - fi) / (bi - ci * alpha[i - 1]);
         }
-        std::cout << " " << CN[MaxX-1];
-    }
-    for (int i{}; i < MaxX; ++i) {
-        points.emplace_back(i, CN[i]);
+        for (int i = MaxN - 1; i >= 0; --i) {
+            q[i] = qLast[i + 1] * alpha[i] + beta[i];
+
+            std::cout << " " << q[i];
+        }
+
+        qLast = q;
+        t = t + ht;
+    } while (t < T + ht / 2);
+
+    for (int i{}; i < MaxN + 1; ++i) {
+        points.emplace_back(i, q[i]);
     }
 
     return points;
 }
 
-std::vector<GraphWindow::Point> Lab3::analyticScheme(std::array<float, MaxX> Cx0) {
+std::vector<GraphWindow::Point> Lab3::analyticScheme(std::array<float, MaxN + 1> Cx0) {
     std::vector<GraphWindow::Point> points;
-    auto w = 3.1415926f/MaxN;
+//    auto w = 3.1415926f / MaxN;
 
-    float a  = (u * t)/h;
+    std::array<double, MaxN + 1> qLast{};
+    std::array<double, MaxN + 1> q{};
 
-    std::array<float, MaxX> CLastN = Cx0;
-    std::array<float, MaxX> CN{};
+    std::cout << std::endl << "n0 : ";
+    for (int i{}; i < MaxN + 1; ++i) {
+        qLast[i] = Cx0[i];
 
-    float C0, sinValue, expValue;
-
-    for (int n{1}; n < MaxN; ++n) {
-        for (int i{1}; i < MaxX; ++i) {
-            sinValue = sin(n * i * w);
-            C0 = CLastN[i] * sinValue / 50;
-            expValue = exp(a * (w*w) * t);
-            CN[i] += C0 * expValue * sinValue;
-        }
+        std::cout << " " << qLast[i];
     }
-    for (int i{}; i < MaxX; ++i) {
-        points.emplace_back(i, CN[i]);
+
+//    int l = MaxN;
+    double t = 0;
+    do {
+        std::cout << std::endl << "t" << t << ": ";
+
+        for (int i = 1; i < MaxN; ++i) {
+            double C;
+            double sum = 0;
+
+            int l;
+            if (i <= 70) {
+                l = 70;
+            } else {
+                l = 80;
+            }
+
+            auto w = 3.1415926f / MaxN;
+
+            for (int m = 1; m < MaxN-1; ++m) {
+                auto sinValue = sin(m * i * w);
+                auto expValue = exp(-a * (w * w) * (float)(m * m) * t);
+
+                if (i <= 70) {
+                    C = ((float)2 / MaxN) * (sin(l * m * w) / (10 * m * m * w * w) - (cos(l * m * w)) / (m * w) -
+                            sin(60 * m * w) / (10 * m * m * w * w));
+                } else {
+                    C = ((float)2 / MaxN) * (-sin(l * m * w) / (10 * m * m * w * w) + sin(70 * m * w) / (10 * m * m * w * w) +
+                            cos(70 * m * w) / (m * w));
+                }
+                sum += (C * expValue * sinValue);
+            }
+            q[i] = sum;
+
+            std::cout << " " << q[i];
+        }
+        t = t + ht;
+    } while (t < 100 + ht / 2);
+
+    for (int i{}; i < MaxN + 1; ++i) {
+        points.emplace_back(i, q[i]);
     }
 
     return points;

@@ -169,8 +169,13 @@ std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxN + 1>
 }
 
 std::vector<GraphWindow::Point> Lab3::analyticScheme(std::array<float, MaxN + 1> Cx0) {
+    auto name1 = "(x-60)/10";
+    auto name2 = "-((x-70)/10)+1";
+
+    Function function1(name1, "x");
+    Function function2(name2, "x");
+
     std::vector<GraphWindow::Point> points;
-//    auto w = 3.1415926f / MaxN;
 
     std::array<double, MaxN + 1> qLast{};
     std::array<double, MaxN + 1> q{};
@@ -182,43 +187,75 @@ std::vector<GraphWindow::Point> Lab3::analyticScheme(std::array<float, MaxN + 1>
         std::cout << " " << qLast[i];
     }
 
-//    int l = MaxN;
+    int l2 = MaxN;
+
+    std::array<double,  MaxN> Cm{};
+    auto w = 3.1415926f / l2;
+
+    {
+        double Integral; // здесь будет интеграл
+        double h = hx;// задаём шаг интегрирования
+        double l1 = 0.0f;
+
+        double n = (l2 - l1) / h; // задаём число разбиений n
+        for (int m = 1; m < l2; ++m) {
+            bool res;
+            Integral = 0;
+
+            double funcValue;
+            for (int j = 1; j <= n; j++) {
+                auto x = l1 + h * (j - 0.5);
+                if (x < 60 || x >= 80) {
+                    funcValue = 0;
+                } else if (x <= 70) {
+                    funcValue = function1.getValue(x, res);
+                } else {
+                    funcValue = function2.getValue(x, res);
+                }
+
+                Integral += 4.0 / 6.0 * h * (funcValue * sin(m * x * w));
+            }
+            for (int j = 1; j <= n - 1; j++) {
+                auto x = l1 + h * j;
+                if (x >= 0 && x < 60 || x >= 80) {
+                    funcValue = 0;
+                } else if (x <= 70) {
+                    funcValue = function1.getValue(x, res);
+                } else {
+                    funcValue = function2.getValue(x, res);
+                }
+
+                Integral += 2.0 / 6.0 * h * (funcValue * sin(m * x * w));
+            }
+
+            std::cout << "I3 = " << Integral << std::endl;
+
+            Cm[m] = 2.0f/MaxN * Integral;
+        }
+    }
+
     double t = 0;
     do {
         std::cout << std::endl << "t" << t << ": ";
 
         for (int i = 1; i < MaxN; ++i) {
-            double C;
             double sum = 0;
 
-            int l;
-            if (i <= 70) {
-                l = 70;
-            } else {
-                l = 80;
-            }
-
-            auto w = 3.1415926f / MaxN;
-
-            for (int m = 1; m < MaxN-1; ++m) {
+            for (int m = 1; m < l2; ++m) {
                 auto sinValue = sin(m * i * w);
-                auto expValue = exp(-a * (w * w) * (float)(m * m) * t);
+                auto expValue = exp(-a * (w * w) * (float)(m * m) * MaxN * ht);
 
-                if (i <= 70) {
-                    C = ((float)2 / MaxN) * (sin(l * m * w) / (10 * m * m * w * w) - (cos(l * m * w)) / (m * w) -
-                            sin(60 * m * w) / (10 * m * m * w * w));
-                } else {
-                    C = ((float)2 / MaxN) * (-sin(l * m * w) / (10 * m * m * w * w) + sin(70 * m * w) / (10 * m * m * w * w) +
-                            cos(70 * m * w) / (m * w));
-                }
-                sum += (C * expValue * sinValue);
+//                C = -((PI * m * sgn(i/10 - 7)*i*i - 70*PI*i*sgn(i/10-7)*i) * sin(PI * m * i) - abs(i - 70) * cos(PI * i * m))
+//                /(10 * PI*PI * m*m * (i - 70)) + (7 * sgn(i/10 - 7)*sin(PI * i * m))/PI * m + (sin(PI * m * i)/(PI * m));
+
+                sum += (Cm[m] * expValue * sinValue);
             }
             q[i] = sum;
 
             std::cout << " " << q[i];
         }
         t = t + ht;
-    } while (t < 100 + ht / 2);
+    } while (t < T + ht / 2);
 
     for (int i{}; i < MaxN + 1; ++i) {
         points.emplace_back(i, q[i]);

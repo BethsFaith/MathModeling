@@ -239,7 +239,7 @@ std::vector<GraphWindow::Point> Lab3::analyticScheme(Function &f1, Function &f2)
 
             for (int m = 1; m < l2; ++m) {
                 auto sinValue = sin((float)m * (float)i * w);
-                auto expValue = exp(-k * (w * w) * (float)(m * m) * t);
+                auto expValue = exp(-(k*k) * (w * w) * (float)(m * m) * t);
 
                 sum += (Cm[m] * expValue * sinValue);
             }
@@ -251,7 +251,7 @@ std::vector<GraphWindow::Point> Lab3::analyticScheme(Function &f1, Function &f2)
     } while (t < T + ht / 2);
 
     for (int i{}; i < MaxN + 1; ++i) {
-        points.emplace_back(i, u[i]*1.015f);
+        points.emplace_back(i, u[i] * 1.015);
     }
 
     return points;

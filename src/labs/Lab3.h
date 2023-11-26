@@ -21,7 +21,7 @@ public:
     static void work(int width, int height);
 
 private:
-    static const int MaxN = 200;
+    static const int MaxN = 100;
     static constexpr double T = 100;
     static constexpr float ht = 0.1f;
     static constexpr float hx = 1;

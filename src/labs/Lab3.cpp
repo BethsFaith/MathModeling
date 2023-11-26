@@ -9,13 +9,10 @@ void Lab3::work(int width, int height) {
 
     std::vector<GraphWindow::Point> points;
 
-    auto name1 = "(x-60)/10"; // z = y0, v = x0
-    auto name2 = "-((x-70)/10)+1";
-
+    auto name1 = "0.0001*x*x+1";
     Function function(name1, "x");
-    Function function2(name2, "x");
 
-    for (int i = 60; i < 71; ++i) {
+    for (int i = 0; i < N; ++i) {
         bool res;
         auto y = function.getValue(i, res);
         if (res) {
@@ -24,23 +21,11 @@ void Lab3::work(int width, int height) {
             std::cout << "Не получилось получить значение на точке с x = " << i;
         }
     }
-    for (int i = 70; i < 81; ++i) {
-        bool res;
-        auto y = function2.getValue(i, res);
-        if (res) {
-            points.emplace_back(i, y);
-        } else {
-            std::cout << "Не получилось получить значение на точке с x = " << i;
-        }
-    }
-    window.addFunction(points, "y1 = (x-60)/10; \ny2 = -(x-70)/10", Color::RED);
+    window.addFunction(points, name1, Color::RED);
 
     // подготовка
     std::array<float, N + 1> Cx{};
-    for (int i{}; i < 60; ++i) {
-        Cx[i] = 0;
-    }
-    for (int i{60}; i < 70; ++i) {
+    for (int i{0}; i < N+1; ++i) {
         bool res;
         auto y = function.getValue(i, res);
         if (res) {
@@ -48,18 +33,6 @@ void Lab3::work(int width, int height) {
         } else {
             std::cout << "Не получилось получить значение на точке с x = " << i;
         }
-    }
-    for (int i{70}; i < 81; ++i) {
-        bool res;
-        auto y = function2.getValue(i, res);
-        if (res) {
-            Cx[i] = y;
-        } else {
-            std::cout << "Не получилось получить значение на точке с x = " << i;
-        }
-    }
-    for (int i{81}; i < N + 1; ++i) {
-        Cx[i] = 0;
     }
 
     points.clear();
@@ -76,7 +49,7 @@ void Lab3::work(int width, int height) {
 
     std::cout << "\n\nАналитическая" << std::endl;
 
-    points = analyticScheme(function, function2);
+    points = analyticScheme(function, function);
     window.addFunction(points, "Analytic", Color::PURPLE);
 
     window.setXStep(20);
@@ -201,25 +174,13 @@ std::vector<GraphWindow::Point> Lab3::analyticScheme(Function &f1, Function &f2)
             double funcValue;
             for (int j = 1; j <= n; j++) {
                 auto x = l1 + h * (j - 0.5);
-                if (x < 60 || x >= 80) {
-                    funcValue = 0;
-                } else if (x <= 70) {
-                    funcValue = f1.getValue(x, res);
-                } else {
-                    funcValue = f2.getValue(x, res);
-                }
+                funcValue = f1.getValue(x, res);
 
                 Integral += 4.0 / 6.0 * h * (funcValue * sin(m * x * w));
             }
             for (int j = 1; j <= n - 1; j++) {
                 auto x = l1 + h * j;
-                if (x >= 0 && x < 60 || x >= 80) {
-                    funcValue = 0;
-                } else if (x <= 70) {
-                    funcValue = f1.getValue(x, res);
-                } else {
-                    funcValue = f2.getValue(x, res);
-                }
+                funcValue = f1.getValue(x, res);
 
                 Integral += 2.0 / 6.0 * h * (funcValue * sin(m * x * w));
             }
@@ -251,7 +212,7 @@ std::vector<GraphWindow::Point> Lab3::analyticScheme(Function &f1, Function &f2)
     } while (t < T + ht / 2);
 
     for (int i{}; i < N + 1; ++i) {
-        points.emplace_back(i, u[i] * 1.015);
+        points.emplace_back(i, u[i]);
     }
 
     return points;

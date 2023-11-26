@@ -36,7 +36,7 @@ void Lab3::work(int width, int height) {
     window.addFunction(points, "y1 = (x-60)/10; \ny2 = -(x-70)/10", Color::RED);
 
     // подготовка
-    std::array<float, MaxN + 1> Cx{};
+    std::array<float, N + 1> Cx{};
     for (int i{}; i < 60; ++i) {
         Cx[i] = 0;
     }
@@ -58,7 +58,7 @@ void Lab3::work(int width, int height) {
             std::cout << "Не получилось получить значение на точке с x = " << i;
         }
     }
-    for (int i{81}; i < MaxN + 1; ++i) {
+    for (int i{81}; i < N + 1; ++i) {
         Cx[i] = 0;
     }
 
@@ -90,14 +90,14 @@ void Lab3::work(int width, int height) {
     window.start();
 }
 
-std::vector<GraphWindow::Point> Lab3::explicitScheme(std::array<float, MaxN + 1> Cx0) {
+std::vector<GraphWindow::Point> Lab3::explicitScheme(std::array<float, N + 1> Cx0) {
     std::vector<GraphWindow::Point> points;
 
-    std::array<float, MaxN + 1> uLastByT = Cx0;
-    std::array<float, MaxN + 1> u{};
+    std::array<float, N + 1> uLastByT = Cx0;
+    std::array<float, N + 1> u{};
 
     std::cout << std::endl << "n0 : ";
-    for (int i{}; i < MaxN + 1; ++i) {
+    for (int i{}; i < N + 1; ++i) {
         std::cout << " " << uLastByT[i];
     }
 
@@ -105,7 +105,7 @@ std::vector<GraphWindow::Point> Lab3::explicitScheme(std::array<float, MaxN + 1>
     do {
         std::cout << std::endl << "t" << t << ": ";
 
-        for (int i = 1; i < MaxN; ++i) {
+        for (int i = 1; i < N; ++i) {
             u[i] = uLastByT[i] + (k*k * ht) * (uLastByT[i + 1] - 2 * uLastByT[i] + uLastByT[i - 1]) / (hx * hx);
 
             std::cout << " " << u[i];
@@ -114,24 +114,24 @@ std::vector<GraphWindow::Point> Lab3::explicitScheme(std::array<float, MaxN + 1>
         t = t + ht;
     } while (t < T + ht / 2);
 
-    for (int i{}; i < MaxN + 1; ++i) {
+    for (int i{}; i < N + 1; ++i) {
         points.emplace_back(i, u[i]);
     }
 
     return points;
 }
 
-std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxN + 1> Cx0) {
+std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, N + 1> Cx0) {
     std::vector<GraphWindow::Point> points;
 
-    std::array<float, MaxN + 1> f = Cx0;
-    std::array<float, MaxN + 1> u{};
+    std::array<float, N + 1> f = Cx0;
+    std::array<float, N + 1> u{};
 
-    std::array<float, MaxN + 1> p{};
-    std::array<float, MaxN + 1> q{};
+    std::array<float, N + 1> p{};
+    std::array<float, N + 1> q{};
 
     std::cout << std::endl << "n0 : ";
-    for (int i{}; i < MaxN + 1; ++i) {
+    for (int i{}; i < N + 1; ++i) {
         p[i] = 0;
         q[i] = 0;
 
@@ -149,16 +149,16 @@ std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxN + 1>
 
         p[0] = - ci/bi;
         q[0] = f[0] / bi;
-        for (int i = 1; i < MaxN-1; ++i) {
+        for (int i = 1; i < N - 1; ++i) {
             auto phi = bi + ai * p[i - 1];
             p[i] = -ci / phi;
             q[i] = (f[i] - ai * q[i-1]) / phi;
         }
-        p[MaxN-1] = (f[MaxN-1] - ai*q[MaxN-2])/(bi + ai * p[MaxN-2]);
+        p[N - 1] = (f[N - 1] - ai * q[N - 2]) / (bi + ai * p[N - 2]);
 
-        u[MaxN-1] = q[MaxN-1];
+        u[N - 1] = q[N - 1];
 
-        for (int i = MaxN - 2; i >= 0; --i) {
+        for (int i = N - 2; i >= 0; --i) {
             u[i] = f[i + 1] * p[i] + q[i];
 
             std::cout << " " << u[i];
@@ -169,7 +169,7 @@ std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxN + 1>
         t = t + ht;
     } while (t < T + ht / 2);
 
-    for (int i{}; i < MaxN + 1; ++i) {
+    for (int i{}; i < N + 1; ++i) {
         points.emplace_back(i, u[i]);
     }
 
@@ -179,13 +179,13 @@ std::vector<GraphWindow::Point> Lab3::implicitScheme(std::array<float, MaxN + 1>
 std::vector<GraphWindow::Point> Lab3::analyticScheme(Function &f1, Function &f2) {
     std::vector<GraphWindow::Point> points;
 
-    std::array<double, MaxN + 1> u{};
+    std::array<double, N + 1> u{};
 
     std::cout << std::endl << "n0 : ";
 
-    int l2 = MaxN;
+    int l2 = N;
 
-    std::array<double,  MaxN> Cm{};
+    std::array<double,  N> Cm{};
     auto w = 3.1415926f / (float)l2;
 
     {
@@ -234,7 +234,7 @@ std::vector<GraphWindow::Point> Lab3::analyticScheme(Function &f1, Function &f2)
     do {
         std::cout << std::endl << "t" << t << ": ";
 
-        for (int i = 1; i < MaxN; ++i) {
+        for (int i = 1; i < N; ++i) {
             double sum = 0;
 
             for (int m = 1; m < l2; ++m) {
@@ -250,7 +250,7 @@ std::vector<GraphWindow::Point> Lab3::analyticScheme(Function &f1, Function &f2)
         t = t + ht;
     } while (t < T + ht / 2);
 
-    for (int i{}; i < MaxN + 1; ++i) {
+    for (int i{}; i < N + 1; ++i) {
         points.emplace_back(i, u[i] * 1.015);
     }
 

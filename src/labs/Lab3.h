@@ -21,14 +21,14 @@ public:
     static void work(int width, int height);
 
 private:
-    static const int MaxN = 100;
+    static const int N = 100;
     static constexpr double T = 100;
     static constexpr float ht = 0.1f;
     static constexpr float hx = 1;
     static constexpr float k = 1;
 
-    static std::vector<GraphWindow::Point> explicitScheme(std::array<float, MaxN+1> Cx0);
-    static std::vector<GraphWindow::Point> implicitScheme(std::array<float, MaxN+1> Cx0);
+    static std::vector<GraphWindow::Point> explicitScheme(std::array<float, N + 1> Cx0);
+    static std::vector<GraphWindow::Point> implicitScheme(std::array<float, N + 1> Cx0);
     static std::vector<GraphWindow::Point> analyticScheme(Function &f1, Function &f2);
 
     template <typename T> static int sgn(T val) {

@@ -25,3 +25,7 @@ bool DifFunction::isWholeNumber(double num) {
     return std::fmod(num, 1) == 0;
 }
 
+void DifFunction::setVariable(const std::string &variable, double value) {
+    _expression.setArgument(variable, value);
+}
+

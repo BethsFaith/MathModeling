@@ -155,10 +155,10 @@ namespace Operations {
         unaryFuncs["cos"] = &cosMy;
         unaryFuncs["tg"] = &tgMy;
         unaryFuncs["ctg"] = &ctgMy;
-        unaryFuncs["arcsin"] = &arcsinMy;
-        unaryFuncs["arccos"] = &arccosMy;
-        unaryFuncs["arctg"] = &arctgMy;
-        unaryFuncs["arcctg"] = &arcctgMy;
+        unaryFuncs["asin"] = &arcsinMy;
+        unaryFuncs["accos"] = &arccosMy;
+        unaryFuncs["atg"] = &arctgMy;
+        unaryFuncs["actg"] = &arcctgMy;
         binaryFuncs["+"] = &addition;
         binaryFuncs["-"] = &subtraction;
         binaryFuncs["*"] = &multiplication;

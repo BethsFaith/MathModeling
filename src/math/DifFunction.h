@@ -15,6 +15,8 @@ public:
     double getValue(double x, bool &success) override;
 
     bool isWholeNumber(double num);
+
+    void setVariable(const std::string &variable, double value);
 private:
     float last_y = 1;
 };

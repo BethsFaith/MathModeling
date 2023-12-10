@@ -21,6 +21,7 @@ public:
     virtual double getValue(double x, bool &success);
 
     std::string getArgument();
+    void setVariable(const std::string &variable, double value);
 protected:
     Sequence _expression;
     std::string _argument;

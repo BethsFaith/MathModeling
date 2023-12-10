@@ -62,15 +62,49 @@ namespace Utilities {
         }
     }
 
-    void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color)
+    void drawLine(sf::RenderWindow &window, int x1, int y1, int x2, int y2, sf::Color color, int width)
     {
-        sf::Vertex line[] =	{sf::Vertex(sf::Vector2f(x1, y1), color),
-                                sf::Vertex(sf::Vector2f(x2 + 1, y2 + 1), color) };
-        window.draw(line, 2, sf::Lines);
+//        sf::Vertex line[] =	{sf::Vertex(sf::Vector2f(x1, y1), color),
+//                                sf::Vertex(sf::Vector2f(x2 + 1, y2 + 1), color) };
+//
+//        window.draw(line, 2, sf::Lines);
+//        window.draw(line, 2, sf::Lines);
+//        window.draw(line, 2, sf::Lines);
+//        window.draw(line, 2, sf::Lines);
+
+        sf :: Vector2f a , b;
+        sf :: ConvexShape ln;
+        sf :: CircleShape A , B;
+
+        float length = sqrt (pow(x1 - x2 , 2 ) + pow( y1 - y2, 2 ) );
+        float rot = atan2 ( x2 -x1 , y2 - y1);
+        float X1 , Y1 , X2 , Y2;
+        X1 = sin( rot + 1.570796 ) * ( width / 2 ); // + 90°
+        Y1 = cos( rot + 1.570796 ) * ( width / 2 ); // + 90°
+        X2 = sin( rot + 4.712388 ) * ( width / 2 ); // + 270°
+        Y2 = cos( rot + 4.712388 ) * ( width / 2 ); // + 270°
+
+        A = sf :: CircleShape( width / 2 , 20 );
+        B = sf :: CircleShape( width / 2 , 20 );
+        A . setPosition ( x1 - width / 2 , y1 - width / 2 );
+        B . setPosition ( x2 - width / 2 , y2 - width / 2 );
+        A . setFillColor( color);
+        A . setFillColor( color);
+
+        ln . setPointCount ( 4 );
+        ln . setPoint ( 0 , sf::Vector2f(x1,y1)+ sf :: Vector2f ( X1 , Y1 ) );
+        ln . setPoint ( 1 , sf::Vector2f(x1,y1) + sf :: Vector2f ( X2 , Y2 ) );
+        ln . setPoint ( 2 , sf::Vector2f(x2,y2) + sf :: Vector2f ( X2 , Y2 ) );
+        ln . setPoint ( 3 , sf::Vector2f(x2,y2) + sf :: Vector2f ( X1 , Y1 ) );
+        ln . setFillColor( color);
+
+        window.draw(ln);
+        window.draw(A);
+        window.draw(B);
     }
-    void setPixel(sf::RenderWindow& window, int x, int y, sf::Color color)
-    {
-        drawLine(window, x, y, x, y, color);
+
+    void setPixel(sf::RenderWindow& window, int x, int y, sf::Color color) {
+        drawLine(window, x, y, x, y, color, 0);
     }
 
     void cursorRestriction(const sf::RenderWindow& window)

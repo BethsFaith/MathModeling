@@ -32,7 +32,16 @@ public:
 
     void addFunction(const std::vector<Point> &points, const std::string &name, Color color);
 
-    void setAxesStep(double axesStep);
+    void setXPrecision(int xPrecision);
+    void setYPrecision(int yPrecision);
+    void setXStep(double xStep);
+    void setYStep(double yStep);
+    void setXOffset(double xOffset);
+    void setYOffset(double yOffset);
+    void setYScale(double yScale);
+    void setXScale(double xScale);
+
+    void clean();
 
 protected:
     void update(double deltaTime) override;
@@ -45,17 +54,24 @@ protected:
     int toCrdX(double x) const;
     int toCrdY(double y) const;
 
-    static const int defaultSegSize = 128;
-    static const int maxSegSize = 250;
+    static const int defaultSegSize = 500;
+    static const int maxSegSize =  4000;
     static const int minSegSize = 15;
 private:
-    double _axesStep{};
-    double _scaleX{};
-    double _scaleY{};
+    double _xStep{};
+    double _yStep{};
+    double _xScale{};
+    double _yScale{};
     double _xOffset{};
     double _yOffset{};
 
+    int _xPrecision{3};
+    int _yPrecision{3};
+
     sf::Color _axisColor;
+
+    double _lastDeltaTime;
+
     std::vector<DrawableFunction> _functions;
     int _curFunctionIndex;
 };

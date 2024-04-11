@@ -150,6 +150,22 @@ void GraphWindow::drawAxes() {
                                  [](const Point& p1, const Point& p2) {
                                      return p1.x < p2.x;
                                  })->x;
+    for (int i = 1; i < _functions.size(); ++i) {
+        auto min = std::min_element(_functions[i].points.begin(), _functions[i].points.end(),
+                                    [](const Point& p1, const Point& p2) {
+                                        return p1.x < p2.x;
+                                    })->x;
+        auto max = std::max_element(_functions[i].points.begin(), _functions[i].points.end(),
+                                    [](const Point& p1, const Point& p2) {
+                                        return p1.x < p2.x;
+                                    })->x;
+        if (minX > min) {
+            minX = min;
+        }
+        if (maxX < max) {
+            maxX = max;
+        }
+    }
 
     minX = std::min(0.0f, minX);
 
@@ -170,8 +186,24 @@ void GraphWindow::drawAxes() {
                                  [](const Point& p1, const Point& p2) {
                                      return p1.y < p2.y;
                                  })->y;
+    for (int i = 1; i < _functions.size(); ++i) {
+        auto min = std::min_element(_functions[i].points.begin(), _functions[i].points.end(),
+                                  [](const Point& p1, const Point& p2) {
+                                      return p1.y < p2.y;
+                                  })->y;
+        auto max = std::max_element(_functions[i].points.begin(), _functions[i].points.end(),
+                                    [](const Point& p1, const Point& p2) {
+                                        return p1.y < p2.y;
+                                    })->y;
+        if (minY > min) {
+            minY = min;
+        }
+        if (maxY < max) {
+            maxY = max;
+        }
+    }
 
-    minY = std::min(0.0f, minY);
+    minY = std::min(0.0f, std::abs(minY));
 
     iterations = (maxY - minY)/_yStep + 1;
     for (float i = 0; i < iterations; ++i) {
